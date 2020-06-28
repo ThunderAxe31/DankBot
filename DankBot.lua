@@ -168,7 +168,7 @@ end
 
 local function act(action_type, alts)
 	for alt = 1, #action[current_action] do
-		log_update(" Action " .. current_action .. ", type: " .. action[current_action].func.name .. ", alt " .. alt)
+		log_update(" Action " .. current_action .. ", type: " .. action[current_action].func.name .. ", alt " .. alt .. " of " .. #action[current_action])
 		for alt_num = 1, #state[current_action-1] do
 			for state_num = 1, #state[current_action-1][alt_num] do
 				
