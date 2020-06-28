@@ -168,7 +168,7 @@ end
 
 local function act(action_type, alts)
 	for alt = 1, #action[current_action] do
-		log_update(" Action " .. current_action .. ", type: " .. action[current_action].func.name .. ", alt " .. alt .. " of " .. #action[current_action])
+		log_update(" Action " .. current_action .. ", Type: " .. action[current_action].func.name .. ", Alt " .. alt .. " of " .. #action[current_action])
 		for alt_num = 1, #state[current_action-1] do
 			for state_num = 1, #state[current_action-1][alt_num] do
 				
@@ -212,7 +212,7 @@ local function act(action_type, alts)
 			end
 		end
 		if state[current_action][alt][1] == nil then--check if this function call failed to progress the botting
-			log_update("  WARNING: Failed to meet requirements for alt " .. alt)
+			log_update("  WARNING: Failed to meet requirements for Alt " .. alt)
 		end
 	end
 end
@@ -272,7 +272,7 @@ client.frameskip(9)
 client.unpause()
 
 while current_action <= #action do--this is the main code block that controls the botting flow
-	log_update("Start of action " .. current_action .. " on " .. os.date("%y/%m/%d %X"))
+	log_update("Start of Action " .. current_action .. " on " .. os.date("%y/%m/%d %X"))
 	
 	act(action[current_action].func, action[current_action])
 	
@@ -285,7 +285,7 @@ while current_action <= #action do--this is the main code block that controls th
 	end
 	
 	if is_failed then
-		log_update(" ERROR: Failed to meet any requirement for action " .. current_action)
+		log_update(" ERROR: Failed to meet any requirement for Action " .. current_action)
 		log_update("Botting session FAILED on " .. os.date("%y/%m/%d %X"))
 		action = #action+1 --this will prevent to display "botting session suspended" message
 	else
