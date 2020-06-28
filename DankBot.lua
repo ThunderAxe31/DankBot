@@ -156,10 +156,12 @@ local function state_add(alt)
 					maximum_index = i
 				end
 			end
-			savestate.save(state[current_action][alt][maximum_index]["slot"], true)
-			state[current_action][alt][maximum_index]["cycle"] = cyclecount
-			state[current_action][alt][maximum_index]["rng"] = rng
-			log_update("   Replaced savestate " .. current_action .. "-" .. alt .. "-" .. maximum_index .. ", cycle " .. cyclecount)
+			if (state[current_action][alt][maximum_index]["cycle"] > cyclecount) then
+				savestate.save(state[current_action][alt][maximum_index]["slot"], true)
+				state[current_action][alt][maximum_index]["cycle"] = cyclecount
+				state[current_action][alt][maximum_index]["rng"] = rng
+				log_update("   Replaced savestate " .. current_action .. "-" .. alt .. "-" .. maximum_index .. ", cycle " .. cyclecount)
+			end
 		end
 	end
 end
@@ -193,26 +195,7 @@ local function act(action_type, alts)
 					
 					local temp_state = memorysavestate.savecorestate()
 					
-					for wait=0, max_wait, wait_step do
-						local max_states = global_max_states
-						if action[current_action][alt]["custom_states"] ~= nil then
-							max_states = action[current_action][alt]["custom_states"]
-						end
-						
-						if state[current_action][alt][max_states] ~= nil then
-							local maximum = state[current_action][alt][1]["cycle"]
-							local maximum_index = 1
-							for i=2, max_states do
-								if state[current_action][alt][i]["cycle"] > maximum then
-									maximum = state[current_action][alt][i]["cycle"]
-									maximum_index = i
-								end
-							end
-							if (state[current_action][alt][maximum_index]["cycle"] <= get_emu_time()) then
-								break
-							end
-						end
-						
+					for wait=0, max_wait, wait_step do						
 						memorysavestate.loadcorestate(temp_state)
 						
 						for i=1, wait do--we wait for a given amount of frames
@@ -220,16 +203,12 @@ local function act(action_type, alts)
 						end
 						
 						if action[current_action].func.execute(alts[alt]) then
-							
 							state_add(alt)
-							
 						end
 					end
 					
 					memorysavestate.removestate(temp_state)
-				
 				end
-				
 			end
 		end
 		if state[current_action][alt][1] == nil then--check if this function call failed to progress the botting
