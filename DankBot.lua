@@ -97,11 +97,13 @@ local function close_session()
 end
 event.onexit(close_session)
 
+local time_unit = ", cycle "
 client.unpause()
 if emu.framecount() == 0 then emu.frameadvance() end
 local get_emu_time = emu.totalexecutedcycles
 if emu.totalexecutedcycles() == 0 then
 	get_emu_time = emu.framecount
+	time_unit = ", frame "
 end
 console.clear()
 client.pause()
@@ -120,7 +122,7 @@ local function state_add(alt)
 						savestate.save(state[current_action][z][i]["slot"], true)
 						state[current_action][z][i]["cycle"] = cyclecount
 						state[current_action][z][i]["rng"] = rng
-						log_update("   Replaced savestate " .. current_action .. "-" .. z .. "-" .. i .. ", cycle " .. cyclecount)
+						log_update("   Replaced savestate " .. current_action .. "-" .. z .. "-" .. i .. time_unit .. cyclecount)
 					end
 					is_double = true
 					z = #state[current_action] +1
@@ -143,7 +145,7 @@ local function state_add(alt)
 					savestate.save(state[current_action][alt][i]["slot"], true)
 					state[current_action][alt][i]["cycle"] = cyclecount
 					state[current_action][alt][i]["rng"] = rng
-					log_update("   Added savestate " .. current_action .. "-" .. alt .. "-" .. i .. ", cycle " .. cyclecount)
+					log_update("   Added savestate " .. current_action .. "-" .. alt .. "-" .. i .. time_unit .. cyclecount)
 					break
 				end
 			end
@@ -160,7 +162,7 @@ local function state_add(alt)
 				savestate.save(state[current_action][alt][maximum_index]["slot"], true)
 				state[current_action][alt][maximum_index]["cycle"] = cyclecount
 				state[current_action][alt][maximum_index]["rng"] = rng
-				log_update("   Replaced savestate " .. current_action .. "-" .. alt .. "-" .. maximum_index .. ", cycle " .. cyclecount)
+				log_update("   Replaced savestate " .. current_action .. "-" .. alt .. "-" .. maximum_index .. time_unit .. cyclecount)
 			end
 		end
 	end
@@ -309,7 +311,7 @@ while current_action <= #action do--this is the main code block that controls th
 						end
 					end
 				end
-				log_update(" Closing with savestate " .. current_action .. "-" .. minimum_alt .. "-" .. minumum_index .. ", cycle " .. state[current_action][minimum_alt][minumum_index]["cycle"])
+				log_update(" Closing with savestate " .. current_action .. "-" .. minimum_alt .. "-" .. minumum_index .. time_unit .. state[current_action][minimum_alt][minumum_index]["cycle"])
 				savestate.load(state[current_action][minimum_alt][minumum_index]["slot"], true)
 				log_update("Botting session COMPLETED on " .. os.date("%y/%m/%d %X"))
 			end
