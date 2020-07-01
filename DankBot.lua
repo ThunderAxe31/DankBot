@@ -289,7 +289,7 @@ while current_action <= #action do--this is the main code block that controls th
 	if is_failed then
 		log_update(" ERROR: Failed to meet any requirement for Action " .. current_action)
 		log_update("Botting session FAILED on " .. os.date("%y/%m/%d %X"))
-		action = #action+1 --this will prevent to display "botting session suspended" message
+		current_action = #action+1 --this will prevent to display "botting session suspended" message
 	else
 		if not movie.isloaded() then --we don't want to store savestates that don't contain movie inputs
 			log_update("Movie file has been closed, script execution aborted.")
