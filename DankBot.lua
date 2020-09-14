@@ -122,6 +122,7 @@ local function state_add(alt)
 	local rng_display = ""
 	if get_rng then
 		rng = get_rng() --this function must be present in route.lua
+		rng_display = ", RNG " .. string.format("%X", rng)
 	end
 	
 	local is_double = false--this code block prevents creating double saves
