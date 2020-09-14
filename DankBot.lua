@@ -118,14 +118,17 @@ client.pause()
 
 local function state_add(alt)
 	local cycle = get_emu_time()
-	local rng = get_rng() --this function must be present in route.lua
+	if get_rng then
+		rng = get_rng() --this function must be present in route.lua
+	end
 	
 	local is_double = false--this code block prevents creating double saves
 	for z = 1, #state[current_action] do
 		if (action[current_action][z]["branch"] == action[current_action][alt]["branch"]) and
 		not action[current_action][alt]["no_duplicate_removal"] then
 			for i = 1, #state[current_action][z] do
-				if (state[current_action][z][i]["rng"] == rng) and (state[current_action][z][i]["cycle"] == cycle) then
+				if (state[current_action][z][i]["rng"] == rng) and (rng ~= nil)
+				and (state[current_action][z][i]["cycle"] == cycle) then
 					is_double = true
 					z = #state[current_action] +1
 					break
@@ -267,6 +270,9 @@ else
 		console.clear()
 		log_update("DankBot v2.0 by ThunderAxe31")
 		log_update("Botting session STARTED on " .. os.date("%y/%m/%d %X"))
+	end
+	if get_rng == nil then
+		log_update("WARNING: get_rng() function not declared in route.lua")
 	end
 end
 
