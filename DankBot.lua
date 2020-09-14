@@ -118,6 +118,8 @@ client.pause()
 
 local function state_add(alt)
 	local cycle = get_emu_time()
+	local rng = nil
+	local rng_display = ""
 	if get_rng then
 		rng = get_rng() --this function must be present in route.lua
 	end
@@ -150,7 +152,7 @@ local function state_add(alt)
 					savestate.save(state[current_action][alt][i]["slot"], true)
 					state[current_action][alt][i]["cycle"] = cycle
 					state[current_action][alt][i]["rng"] = rng
-					log_update("   Added savestate " .. current_action .. "-" .. alt .. "-" .. i .. time_unit .. cycle)
+					log_update("   Added savestate " .. current_action .. "-" .. alt .. "-" .. i .. time_unit .. cycle .. rng_display)
 					break
 				end
 			end
@@ -167,7 +169,7 @@ local function state_add(alt)
 				savestate.save(state[current_action][alt][maximum_index]["slot"], true)
 				state[current_action][alt][maximum_index]["cycle"] = cycle
 				state[current_action][alt][maximum_index]["rng"] = rng
-				log_update("   Replaced savestate " .. current_action .. "-" .. alt .. "-" .. maximum_index .. time_unit .. cycle)
+				log_update("   Replaced savestate " .. current_action .. "-" .. alt .. "-" .. maximum_index .. time_unit .. cycle .. rng_display)
 			end
 		end
 	end
