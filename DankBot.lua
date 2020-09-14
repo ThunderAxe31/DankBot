@@ -117,13 +117,7 @@ local function state_add(alt)
 		if (action[current_action][z]["branch"] == action[current_action][alt]["branch"]) and
 		not action[current_action][alt]["no_duplicate_removal"] then
 			for i = 1, #state[current_action][z] do
-				if (state[current_action][z][i]["rng"] == rng) then
-					if z == alt and (state[current_action][z][i]["cycle"] > cyclecount) then--use with caution. disable if you want to be verbose
-						savestate.save(state[current_action][z][i]["slot"], true)
-						state[current_action][z][i]["cycle"] = cyclecount
-						state[current_action][z][i]["rng"] = rng
-						log_update("   Replaced savestate " .. current_action .. "-" .. z .. "-" .. i .. time_unit .. cyclecount)
-					end
+				if (state[current_action][z][i]["rng"] == rng) and (state[current_action][z][i]["cycle"] == cyclecount) then
 					is_double = true
 					z = #state[current_action] +1
 					break
