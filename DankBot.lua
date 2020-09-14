@@ -67,6 +67,14 @@ function check_freeze(time_limit, check_type, check_value, func, argument)
 end
 
 local action = dofile("route.lua") --this is where the bot takes your customizable botting data for making your TAS
+--the following lines are used to fallback to default values, in case these aren't declared in the route.lua
+global_max_states = global_max_states --maximum amount of states to be kept for each action
+global_max_wait   = global_max_wait   --maximum amount of frames to wait before attempting an action
+global_wait_step  = global_wait_step  --interval of frame increase between action attempts
+if global_max_states == nil then global_max_states = 10 end
+if global_max_wait   == nil then global_max_wait   = 10 end
+if global_wait_step  == nil then global_wait_step  =  1 end
+
 action[0] = {}
 action[0][1] = {}
 
