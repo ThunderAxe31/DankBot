@@ -109,7 +109,7 @@ console.clear()
 client.pause()
 
 local function state_add(alt)
-	local cyclecount = get_emu_time()
+	local cycle = get_emu_time()
 	local rng = get_rng() --this function must be present in route.lua
 	
 	local is_double = false--this code block prevents creating double saves
@@ -117,7 +117,7 @@ local function state_add(alt)
 		if (action[current_action][z]["branch"] == action[current_action][alt]["branch"]) and
 		not action[current_action][alt]["no_duplicate_removal"] then
 			for i = 1, #state[current_action][z] do
-				if (state[current_action][z][i]["rng"] == rng) and (state[current_action][z][i]["cycle"] == cyclecount) then
+				if (state[current_action][z][i]["rng"] == rng) and (state[current_action][z][i]["cycle"] == cycle) then
 					is_double = true
 					z = #state[current_action] +1
 					break
@@ -137,9 +137,9 @@ local function state_add(alt)
 					state[current_action][alt][i] = {}
 					state[current_action][alt][i]["slot"] = current_action .. "-" .. alt .. "-" .. i .. ".State"
 					savestate.save(state[current_action][alt][i]["slot"], true)
-					state[current_action][alt][i]["cycle"] = cyclecount
+					state[current_action][alt][i]["cycle"] = cycle
 					state[current_action][alt][i]["rng"] = rng
-					log_update("   Added savestate " .. current_action .. "-" .. alt .. "-" .. i .. time_unit .. cyclecount)
+					log_update("   Added savestate " .. current_action .. "-" .. alt .. "-" .. i .. time_unit .. cycle)
 					break
 				end
 			end
@@ -152,11 +152,11 @@ local function state_add(alt)
 					maximum_index = i
 				end
 			end
-			if (state[current_action][alt][maximum_index]["cycle"] > cyclecount) then
+			if (state[current_action][alt][maximum_index]["cycle"] > cycle) then
 				savestate.save(state[current_action][alt][maximum_index]["slot"], true)
-				state[current_action][alt][maximum_index]["cycle"] = cyclecount
+				state[current_action][alt][maximum_index]["cycle"] = cycle
 				state[current_action][alt][maximum_index]["rng"] = rng
-				log_update("   Replaced savestate " .. current_action .. "-" .. alt .. "-" .. maximum_index .. time_unit .. cyclecount)
+				log_update("   Replaced savestate " .. current_action .. "-" .. alt .. "-" .. maximum_index .. time_unit .. cycle)
 			end
 		end
 	end
