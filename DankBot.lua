@@ -1,4 +1,4 @@
---DankBot v2.0 by ThunderAxe31
+--DankBot v2.1 by ThunderAxe31
 --optimized for use on Gambatte with equal_length_frames set to False
 --place this script into its own folder, because it's going generate multiple files
 --todo: implement automatic sanity check of route.lua; make it compatible with FCEUX
