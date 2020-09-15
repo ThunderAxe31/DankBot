@@ -210,6 +210,22 @@ local function act(action_type, alts)
 							emu.frameadvance()
 						end
 						
+						local max_states = global_max_states
+						if action[current_action][alt]["custom_states"] ~= nil then
+							max_states = action[current_action][alt]["custom_states"]
+						end
+						if state[current_action][alt][max_states] ~= nil then
+							local maximum_index = 1
+							for i=2, max_states do
+								if state[current_action][alt][i]["cycle"] > state[current_action][alt][maximum_index]["cycle"] then
+									maximum_index = i
+								end
+							end
+							if get_emu_time() > state[current_action][alt][maximum_index]["cycle"] then
+								break
+							end
+						end
+						
 						if action[current_action].func.execute(alts[alt]) then
 							state_add(alt)
 						end
