@@ -158,11 +158,9 @@ local function state_add(alt)
 				end
 			end
 		else
-			local maximum = state[current_action][alt][1]["cycle"]
 			local maximum_index = 1
 			for i=2, max_states do
-				if state[current_action][alt][i]["cycle"] > maximum then
-					maximum = state[current_action][alt][i]["cycle"]
+				if state[current_action][alt][i]["cycle"] > state[current_action][alt][maximum_index]["cycle"] then
 					maximum_index = i
 				end
 			end
