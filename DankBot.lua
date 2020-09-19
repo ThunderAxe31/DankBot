@@ -153,7 +153,7 @@ local function state_add(alt)
 					savestate.save(state[current_action][alt][i]["slot"], true)
 					state[current_action][alt][i]["cycle"] = cycle
 					state[current_action][alt][i]["rng"] = rng
-					log_update("   Added savestate " .. current_action .. "-" .. alt .. "-" .. i .. time_unit .. cycle .. rng_display)
+					log_update("   Added state " .. current_action .. "-" .. alt .. "-" .. i .. time_unit .. cycle .. rng_display)
 					break
 				end
 			end
@@ -168,7 +168,7 @@ local function state_add(alt)
 				savestate.save(state[current_action][alt][maximum_index]["slot"], true)
 				state[current_action][alt][maximum_index]["cycle"] = cycle
 				state[current_action][alt][maximum_index]["rng"] = rng
-				log_update("   Replaced savestate " .. current_action .. "-" .. alt .. "-" .. maximum_index .. time_unit .. cycle .. rng_display)
+				log_update("   Replaced state " .. current_action .. "-" .. alt .. "-" .. maximum_index .. time_unit .. cycle .. rng_display)
 			end
 		end
 	end
@@ -336,7 +336,7 @@ while current_action <= #action do--this is the main code block that controls th
 						end
 					end
 				end
-				log_update(" Closing with savestate " .. current_action .. "-" .. minimum_alt .. "-" .. minumum_index .. time_unit .. state[current_action][minimum_alt][minumum_index]["cycle"])
+				log_update(" Closing with state " .. current_action .. "-" .. minimum_alt .. "-" .. minumum_index .. time_unit .. state[current_action][minimum_alt][minumum_index]["cycle"])
 				savestate.load(state[current_action][minimum_alt][minumum_index]["slot"], true)
 				log_update("Botting session COMPLETED on " .. os.date("%y/%m/%d %X"))
 			end
