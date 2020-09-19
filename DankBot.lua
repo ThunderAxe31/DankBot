@@ -53,7 +53,8 @@ freezes = 0
 
 function check_freeze(time_limit, check_type, check_value, func, argument)
 	local count = 0
-	while (func(argument) == check_value) == check_type do
+	while ((argument == nil) and ((func() == check_value) == check_type))
+	or ((argument ~= nil) and ((func(argument) == check_value) == check_type)) do
 		count = count +1
 		if count > time_limit then
 			freezes = freezes +1
