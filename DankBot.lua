@@ -286,7 +286,7 @@ else
 		io.close(file_log)
 		savestate.save(state[0][1][1]["slot"], true)
 		console.clear()
-		log_update("DankBot v2.0 by ThunderAxe31")
+		log_update("DankBot v2.1 by ThunderAxe31")
 		log_update("Botting session STARTED on " .. os.date("%y/%m/%d %X"))
 	end
 	if get_rng == nil then
