@@ -108,12 +108,15 @@ event.onexit(close_session)
 
 local time_unit = ", cycle "
 client.unpause()
+local temp_state = memorysavestate.savecorestate()
 if emu.framecount() == 0 then emu.frameadvance() end
 local get_emu_time = emu.totalexecutedcycles
 if emu.totalexecutedcycles() == 0 then
 	get_emu_time = emu.framecount
 	time_unit = ", frame "
 end
+memorysavestate.loadcorestate(temp_state)
+memorysavestate.removestate(temp_state)
 console.clear()
 client.pause()
 
@@ -286,8 +289,12 @@ else
 		io.close(file_log)
 		savestate.save(state[0][1][1]["slot"], true)
 		console.clear()
-		log_update("DankBot v2.1 by ThunderAxe31")
-		log_update("Botting session STARTED on " .. os.date("%y/%m/%d %X"))
+		log_update("DankBot v2.1 by ThunderAxe31, session STARTED")
+		local rng_display = ""
+		if get_rng then
+			rng_display = ", RNG " .. string.format("%X", get_rng())
+		end
+		log_update(" Initializing state 0-1-1" .. time_unit .. get_emu_time() .. rng_display)
 	end
 	if get_rng == nil then
 		log_update("WARNING: get_rng() function not declared in route.lua")
