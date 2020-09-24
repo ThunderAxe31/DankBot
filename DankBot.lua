@@ -70,9 +70,11 @@ end
 local action = dofile("route.lua") --this is where the bot takes your customizable botting data for making your TAS
 --the following lines are used to fallback to default values, in case these aren't declared in the route.lua
 global_max_states = global_max_states --maximum amount of states to be kept for each action
+global_min_wait   = global_min_wait   --minimum amount of frames to wait before attempting an action
 global_max_wait   = global_max_wait   --maximum amount of frames to wait before attempting an action
 global_wait_step  = global_wait_step  --interval of frame increase between action attempts
 if global_max_states == nil then global_max_states = 10 end
+if global_min_wait   == nil then global_min_wait   =  0 end
 if global_max_wait   == nil then global_max_wait   = 10 end
 if global_wait_step  == nil then global_wait_step  =  1 end
 
@@ -195,8 +197,15 @@ local function act(action_type, alts)
 				
 				if action[current_action].func.prepare(alts[alt]) then
 				
+					local min_wait = global_min_wait
+					if action[current_action][alt]["custom_min_wait"] ~= nil then
+						min_wait = action[current_action][alt]["custom_min_wait"]
+					end
+				
 					local max_wait = global_max_wait
-					if action[current_action][alt]["custom_wait"] ~= nil then
+					if action[current_action][alt]["custom_max_wait"] ~= nil then
+						max_wait = action[current_action][alt]["custom_max_wait"]
+					elseif action[current_action][alt]["custom_wait"] ~= nil then--included for retro-compatibility
 						max_wait = action[current_action][alt]["custom_wait"]
 					end
 					
@@ -207,7 +216,7 @@ local function act(action_type, alts)
 					
 					local temp_state = memorysavestate.savecorestate()
 					
-					for wait=0, max_wait, wait_step do						
+					for wait=min_wait, max_wait, wait_step do						
 						memorysavestate.loadcorestate(temp_state)
 						
 						for i=1, wait do--we wait for a given amount of frames
