@@ -333,6 +333,10 @@ while current_action <= #action do--this is the main code block that controls th
 			log_update(" ERROR: It appears you closed the movie file.")
 			log_update("Botting session INTERRUPTED on " .. os.date("%y/%m/%d %X"))
 			current_action = #action+1
+		elseif emu.framecount() == 0 then --in case the user accidentally restarted the movie playback, so let's not save this action data
+			log_update(" ERROR: It appears you restarted movie replay.")
+			log_update("Botting session INTERRUPTED on " .. os.date("%y/%m/%d %X"))
+			current_action = #action+1
 		else --if script execution gets here, the progress from latest action executed will be stored on disk, and the previous one deleted
 			if current_action == #action then--it's over! let's load the best state.
 				local minimum = state[current_action][1][1]["cycle"]
