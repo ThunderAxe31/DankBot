@@ -252,7 +252,7 @@ end
 
 if not movie.isloaded() then --since there is no function to create a new movie, the user must open a movie before launching the script
 	current_action = false
-	console.log("No movie file loaded, script execution aborted.")
+	console.log("ERROR: No movie file loaded. IMPORTANT NOTE: The movie file that it's loaded before launching the script will be used as base for the botting session, so ALL data previously contained will be discarded. For this reason, it is recommended to load an empty movie or an otherwise disposable movie file, for example a copy.")
 	current_action = #action+1
 else
 	local file_resume = io.open("resume.lua", "r")
@@ -329,11 +329,11 @@ while current_action <= #action do--this is the main code block that controls th
 		log_update("Botting session FAILED on " .. os.date("%y/%m/%d %X"))
 		current_action = #action+1 --this will prevent to display "botting session suspended" message
 	else
-		if not movie.isloaded() then --we don't want to store savestates that don't contain movie inputs
-			log_update("Movie file has been closed, script execution aborted.")
+		if not movie.isloaded() then --we don't want to store savestates that don't contain movie inputs, so let's not save this action data
+			log_update(" ERROR: It appears you closed the movie file.")
 			log_update("Botting session INTERRUPTED on " .. os.date("%y/%m/%d %X"))
 			current_action = #action+1
-		else
+		else --if script execution gets here, the progress from latest action executed will be stored on disk, and the previous one deleted
 			if current_action == #action then--it's over! let's load the best state.
 				local minimum = state[current_action][1][1]["cycle"]
 				local minumum_index = 1
