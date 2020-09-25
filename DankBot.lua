@@ -118,7 +118,7 @@ memorysavestate.removestate(temp_state)
 console.clear()
 client.pause()
 
-local function state_add(alt)
+local function state_add(alt, wait)
 	local cycle = get_emu_time()
 	local rng = nil
 	local rng_display = ""
@@ -155,7 +155,7 @@ local function state_add(alt)
 					savestate.save(state[current_action][alt][i]["slot"], true)
 					state[current_action][alt][i]["cycle"] = cycle
 					state[current_action][alt][i]["rng"] = rng
-					log_update("   Added state " .. current_action .. "-" .. alt .. "-" .. i .. time_unit .. cycle .. rng_display)
+					log_update("   Added state " .. current_action .. "-" .. alt .. "-" .. i .. ", wait " .. wait .. time_unit .. cycle .. rng_display)
 					break
 				end
 			end
@@ -170,7 +170,7 @@ local function state_add(alt)
 				savestate.save(state[current_action][alt][maximum_index]["slot"], true)
 				state[current_action][alt][maximum_index]["cycle"] = cycle
 				state[current_action][alt][maximum_index]["rng"] = rng
-				log_update("   Replaced state " .. current_action .. "-" .. alt .. "-" .. maximum_index .. time_unit .. cycle .. rng_display)
+				log_update("   Replaced state " .. current_action .. "-" .. alt .. "-" .. maximum_index .. ", wait " .. wait .. time_unit .. cycle .. rng_display)
 			end
 		end
 	end
@@ -236,7 +236,7 @@ local function act(action_type, alts)
 						end
 						
 						if action[current_action].func.execute(alts[alt]) then
-							state_add(alt)
+							state_add(alt, wait)
 						end
 					end
 					
