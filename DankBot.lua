@@ -272,6 +272,8 @@ else
 					state[current_action-1] = resume_data
 					if current_action == #action+1 then
 						console.log("Previous session is already complete. Add more actions or delete resume.lua")
+					elseif current_action > #action+1 then
+						console.log("ERROR: Session from resume.lua contains more actions than route.lua")
 					else
 						log_update("Botting session RESUMED   on " .. os.date("%y/%m/%d %X"))
 					end
