@@ -1425,8 +1425,8 @@ function export_treeview()
 				
 				for z2=1, #cells[x-1] do 
 					for i2=1, #cells[x-1][z2] do --search for the parent... yeah it's a crappy solution, but it works...
-						if (cells[x-1][z2][i2]["origin"][2] == state[x][z][i]["parent"][2]) and
-						(cells[x-1][z2][i2]["origin"][2] == state[x][z][i]["parent"][2]) then
+						if (cells[x-1][z2][i2]["origin"][1] == state[x][z][i]["parent"][1]) and
+						   (cells[x-1][z2][i2]["origin"][2] == state[x][z][i]["parent"][2]) then
 							x2 = cells[x-1][z2][i2]["x_center"]
 							y2 = cells[x-1][z2][i2]["y_center"]
 							if cells[x][z][i]["fastest"] then
