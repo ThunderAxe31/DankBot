@@ -1195,8 +1195,8 @@ local function draw_line(red, green, blue, canvas, x0, y0, x1, y1)
         stepx = 1
     end
 
-    if (canvas[math.floor(y0)] ~= nil) and (canvas[math.floor(x0)] ~= nil) then
-		canvas[math.floor(y0)][math.floor(x0)] = {R=red, G=green, B=blue}
+    if (canvas[y0] ~= nil) and (canvas[x0] ~= nil) then
+		canvas[y0][x0] = {R=red, G=green, B=blue}
 	end
     if dx > dy then
         local fraction = dy - bit.rshift(dx, 1)
@@ -1207,8 +1207,8 @@ local function draw_line(red, green, blue, canvas, x0, y0, x1, y1)
             end
             x0 = x0 + stepx
             fraction = fraction + dy
-            if (canvas[math.floor(y0)] ~= nil) and (canvas[math.floor(x0)] ~= nil) then
-				canvas[math.floor(y0)][math.floor(x0)] = {R=red, G=green, B=blue}
+            if (canvas[y0] ~= nil) and (canvas[x0] ~= nil) then
+				canvas[y0][x0] = {R=red, G=green, B=blue}
 			end
         end
     else
@@ -1220,8 +1220,8 @@ local function draw_line(red, green, blue, canvas, x0, y0, x1, y1)
             end
             y0 = y0 + stepy
             fraction = fraction + dx
-            if (canvas[math.floor(y0)] ~= nil) and (canvas[math.floor(x0)] ~= nil) then
-				canvas[math.floor(y0)][math.floor(x0)] = {R=red, G=green, B=blue}
+            if (canvas[y0] ~= nil) and (canvas[x0] ~= nil) then
+				canvas[y0][x0] = {R=red, G=green, B=blue}
 			end
         end
     end
