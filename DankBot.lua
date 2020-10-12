@@ -1,7 +1,7 @@
 --DankBot v2.1 by ThunderAxe31
 --optimized for use on Gambatte with equal_length_frames set to False
 --place this script into its own folder, because it's going generate multiple files
---todo: implement automatic sanity check of route.lua; make it compatible with FCEUX
+--todo: implement automatic sanity check of route.lua; make it compatible with FCEUX;
 
 function table.val_to_str ( v )
   if "string" == type( v ) then
@@ -67,7 +67,7 @@ function check_freeze(time_limit, check_type, check_value, func, argument)
 	return true
 end
 
-local action = dofile("route.lua") --this is where the bot takes your customizable botting data for making your TAS
+action = dofile("route.lua") --this is where the bot takes your customizable botting data for making your TAS
 --the following lines are used to fallback to default values, in case these aren't declared in the route.lua
 global_max_states = global_max_states or 10 --maximum amount of states to be kept for each action
 global_min_wait   = global_min_wait   or  0 --minimum amount of frames to wait before attempting an action
@@ -77,13 +77,7 @@ global_wait_step  = global_wait_step  or  1 --interval of frame increase between
 action[0] = {}
 action[0][1] = {}
 
-local state = {}
-for i = 1, #action do --initializes the array of the savestate data
-	state[i] = {}
-	for l = 1, #action[i] do
-		state[i][l] = {}
-	end
-end
+state = {} --initializes the array of the savestate data
 state[0] = {}
 state[0][1] = {}
 state[0][1][1] = {}
@@ -108,7 +102,7 @@ local time_unit = ", cycle "
 client.unpause()
 local temp_state = memorysavestate.savecorestate()
 if emu.framecount() == 0 then emu.frameadvance() end
-local get_emu_time = emu.totalexecutedcycles
+get_emu_time = emu.totalexecutedcycles
 if emu.totalexecutedcycles() == 0 then
 	get_emu_time = emu.framecount
 	time_unit = ", frame "
@@ -118,7 +112,7 @@ memorysavestate.removestate(temp_state)
 console.clear()
 client.pause()
 
-local function state_add(alt, wait)
+local function state_add(alt, wait, parent)
 	local cycle = get_emu_time()
 	local rng = nil
 	local rng_display = ""
@@ -153,6 +147,8 @@ local function state_add(alt, wait)
 					state[current_action][alt][i] = {}
 					state[current_action][alt][i]["slot"] = current_action .. "-" .. alt .. "-" .. i .. ".State"
 					savestate.save(state[current_action][alt][i]["slot"], true)
+					state[current_action][alt][i]["parent"] = parent --this is necessary for drawing the graphical output
+					state[current_action][alt][i]["wait"] = wait
 					state[current_action][alt][i]["cycle"] = cycle
 					state[current_action][alt][i]["rng"] = rng
 					log_update("   Added state " .. current_action .. "-" .. alt .. "-" .. i .. ", wait " .. wait .. time_unit .. cycle .. rng_display)
@@ -168,6 +164,7 @@ local function state_add(alt, wait)
 			end
 			if (state[current_action][alt][maximum_index]["cycle"] > cycle) then
 				savestate.save(state[current_action][alt][maximum_index]["slot"], true)
+				state[current_action][alt][maximum_index]["wait"] = wait
 				state[current_action][alt][maximum_index]["cycle"] = cycle
 				state[current_action][alt][maximum_index]["rng"] = rng
 				log_update("   Replaced state " .. current_action .. "-" .. alt .. "-" .. maximum_index .. ", wait " .. wait .. time_unit .. cycle .. rng_display)
@@ -192,12 +189,12 @@ local function act(action_type, alts)
 				savestate.load(state[current_action-1][alt_num][state_num]["slot"], true)
 				
 				if action[current_action].func.prepare(alts[alt]) then
-				
+					
 					local min_wait = global_min_wait
 					if action[current_action][alt]["custom_min_wait"] ~= nil then
 						min_wait = action[current_action][alt]["custom_min_wait"]
 					end
-				
+					
 					local max_wait = global_max_wait
 					if action[current_action][alt]["custom_max_wait"] ~= nil then
 						max_wait = action[current_action][alt]["custom_max_wait"]
@@ -236,7 +233,7 @@ local function act(action_type, alts)
 						end
 						
 						if action[current_action].func.execute(alts[alt]) then
-							state_add(alt, wait)
+							state_add(alt, wait, {alt_num, state_num})
 						end
 					end
 					
@@ -269,7 +266,7 @@ else
 				resume_data["restart_action"] > 0 then
 					current_action = resume_data["restart_action"]
 					resume_data["restart_action"] = nil
-					state[current_action-1] = resume_data
+					state = resume_data
 					if current_action == #action+1 then
 						console.log("Previous session is already complete. Add more actions or delete resume.lua")
 					elseif current_action > #action+1 then
@@ -295,13 +292,17 @@ else
 		io.write("")
 		io.close(file_log)
 		savestate.save(state[0][1][1]["slot"], true)
+		local cycle = get_emu_time()
+		state[0][1][1]["wait"] = 0
+		state[0][1][1]["cycle"] = cycle
+		state[0][1][1]["rng"] = get_rng()
 		console.clear()
 		log_update("DankBot v2.1 by ThunderAxe31, session STARTED")
 		local rng_display = ""
 		if get_rng then
 			rng_display = ", RNG " .. string.format("%X", get_rng())
 		end
-		log_update(" Initializing state 0-1-1" .. time_unit .. get_emu_time() .. rng_display)
+		log_update(" Initializing state 0-1-1" .. time_unit .. cycle .. rng_display)
 	end
 	if get_rng == nil then
 		log_update("WARNING: get_rng() function not declared in route.lua")
@@ -314,7 +315,14 @@ client.frameskip(9)
 client.unpause()
 
 while current_action <= #action do--this is the main code block that controls the botting flow
-	log_update("Start of Action " .. current_action .. " on " .. os.date("%y/%m/%d %X"))
+	state[current_action] = {}
+	for i = 1, #action[current_action] do
+		state[current_action][i] = {}
+	end
+	
+	local action_date = os.date("%y/%m/%d %X")
+	log_update("Start of Action " .. current_action .. " on " .. action_date)
+	state[current_action]["date"] = action_date
 	
 	act(action[current_action].func, action[current_action])
 	
@@ -363,20 +371,38 @@ while current_action <= #action do--this is the main code block that controls th
 			for z=1, #state[current_action-1] do --this deletes the old savestate files from disk
 				for i=1, #state[current_action-1][z] do
 					os.remove(state[current_action-1][z][i]["slot"])
-					state[current_action-1][z][i]["slot"]       = nil
-					state[current_action-1][z][i]["cycle"]      = nil
-					state[current_action-1][z][i]["rng"]        = nil
-					state[current_action-1][z][i]               = nil
+					state[current_action-1][z][i]["slot"] = nil
 				end
-				state[current_action-1][z] = nil
 			end
-			state[current_action-1] = nil
 			
-			state[current_action]["restart_action"] = current_action +1
+			state["restart_action"] = current_action +1
 			file_resume = io.open("resume.lua", "w")
 			io.output(file_resume)
-			io.write("return " .. table.tostring(state[current_action])) --save state data for resuming
+			io.write("return " .. table.tostring(state)) --save state data for resuming
 			io.close(file_resume)
+			
+			if(current_action>=2) then
+				if export_treeview then
+					if export_treeview() then
+						log_update("Treeview.bmp file updated.")
+					else
+						log_update("ERROR: Treeview.lua failed to export Treeview.bmp")
+					end
+				elseif not dofile("DankBot Treeview.lua") then
+					log_update("ERROR: Treeview.lua not found, unable to export Treeview.bmp")
+				else
+					if export_treeview then
+						if export_treeview() then
+							log_update("Treeview.bmp file updated.")
+						else
+							log_update("ERROR: Treeview.lua failed to export Treeview.bmp")
+						end
+					else
+						log_update("ERROR: Treeview.lua damaged, unable to export Treeview.bmp")
+					end
+				end
+			end
+			
 			current_action = current_action +1
 		end
 	end
