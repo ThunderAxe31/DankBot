@@ -1267,7 +1267,7 @@ function export_treeview()
 						cells[x][z][states_copied][4] = "RNG: "   .. string.format("%X", state[x][z][i]["rng"])
 						cells[x][z][states_copied]["cycle"] = state[x][z][i]["cycle"]
 						cells[x][z][states_copied]["wait"]  = state[x][z][i]["wait"]
-						cells[x][z][states_copied]["origin"] = i
+						cells[x][z][states_copied]["origin"] = {z, i}
 						states_copied = states_copied +1
 					end
 				end
@@ -1422,15 +1422,20 @@ function export_treeview()
 				
 				local x2 = 0
 				local y2 = 0
-				for i2=1, #cells[x-1][z] do --search for the parent... yeah it's a crappy solution, but it works...
-					if cells[x-1][z][i2]["origin"] == state[x][z][i]["parent"][2] then
-						x2 = cells[x-1][z][i2]["x_center"]
-						y2 = cells[x-1][z][i2]["y_center"]
-						if cells[x][z][i]["fastest"] then
-							cells[x-1][z][i2]["fastest"] = true
+				
+				for z2=1, #cells[x-1] do 
+					for i2=1, #cells[x-1][z2] do --search for the parent... yeah it's a crappy solution, but it works...
+						if (cells[x-1][z2][i2]["origin"][2] == state[x][z][i]["parent"][2]) and
+						(cells[x-1][z2][i2]["origin"][2] == state[x][z][i]["parent"][2]) then
+							x2 = cells[x-1][z2][i2]["x_center"]
+							y2 = cells[x-1][z2][i2]["y_center"]
+							if cells[x][z][i]["fastest"] then
+								cells[x-1][z2][i2]["fastest"] = true
+							end
+							--let's get out of there.
+							z2 = #cells[x-1]+1
+							break
 						end
-						--let's get out of there.
-						break
 					end
 				end
 				draw_line(new_red, new_green, new_blue, canvas,	cells[x][z][i]["x_center"]  , cells[x][z][i]["y_center"]  , x2  , y2)
