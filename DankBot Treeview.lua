@@ -1195,7 +1195,7 @@ local function draw_line(red, green, blue, canvas, x0, y0, x1, y1)
         stepx = 1
     end
 
-    if (canvas[y0] ~= nil) and (canvas[x0] ~= nil) then
+    if (canvas[y0] ~= nil) and (canvas[y0][x0] ~= nil) then
 		canvas[y0][x0] = {R=red, G=green, B=blue}
 	end
     if dx > dy then
@@ -1207,7 +1207,7 @@ local function draw_line(red, green, blue, canvas, x0, y0, x1, y1)
             end
             x0 = x0 + stepx
             fraction = fraction + dy
-            if (canvas[y0] ~= nil) and (canvas[x0] ~= nil) then
+            if (canvas[y0] ~= nil) and (canvas[y0][x0] ~= nil) then
 				canvas[y0][x0] = {R=red, G=green, B=blue}
 			end
         end
@@ -1220,7 +1220,7 @@ local function draw_line(red, green, blue, canvas, x0, y0, x1, y1)
             end
             y0 = y0 + stepy
             fraction = fraction + dx
-            if (canvas[y0] ~= nil) and (canvas[x0] ~= nil) then
+            if (canvas[y0] ~= nil) and (canvas[y0][x0] ~= nil) then
 				canvas[y0][x0] = {R=red, G=green, B=blue}
 			end
         end
