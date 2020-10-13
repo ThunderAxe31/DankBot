@@ -193,10 +193,7 @@ local function state_add(alt, wait, parent)
 		end
 	end
 	if is_double == false then
-		local max_states = global_max_states
-		if action[current_action][alt]["custom_states"] ~= nil then
-			max_states = action[current_action][alt]["custom_states"]
-		end
+		local max_states = action[current_action][alt]["custom_states"] or action[current_action][alt]["custom_max_states"] or global_max_states
 		
 		if state[current_action][alt][max_states] == nil then
 			for i=1, max_states do
@@ -260,22 +257,11 @@ local function act(action_type, alts)
 				
 				if action[current_action].func.prepare(alts[alt]) then
 					
-					local min_wait = global_min_wait
-					if action[current_action][alt]["custom_min_wait"] ~= nil then
-						min_wait = action[current_action][alt]["custom_min_wait"]
-					end
+					local min_wait = action[current_action][alt]["custom_min_wait"] or global_min_wait
 					
-					local max_wait = global_max_wait
-					if action[current_action][alt]["custom_max_wait"] ~= nil then
-						max_wait = action[current_action][alt]["custom_max_wait"]
-					elseif action[current_action][alt]["custom_wait"] ~= nil then--included for retro-compatibility
-						max_wait = action[current_action][alt]["custom_wait"]
-					end
+					local max_wait = action[current_action][alt]["custom_wait"] or action[current_action][alt]["custom_max_wait"] or global_max_wait
 					
-					local wait_step = global_wait_step
-					if action[current_action][alt]["custom_wait_step"] ~= nil then
-						wait_step = action[current_action][alt]["custom_wait_step"]
-					end
+					local wait_step = action[current_action][alt]["custom_wait_step"] or global_wait_step
 					
 					local temp_state = 0
 					if memorysavestate and memorysavestate.clearstatesfrommemory then
@@ -296,10 +282,8 @@ local function act(action_type, alts)
 							emu.frameadvance()
 						end
 						
-						local max_states = global_max_states
-						if action[current_action][alt]["custom_states"] ~= nil then
-							max_states = action[current_action][alt]["custom_states"]
-						end
+						local max_states = action[current_action][alt]["custom_states"] or action[current_action][alt]["custom_max_states"] or global_max_states
+						
 						if state[current_action][alt][max_states] ~= nil then
 							local maximum_index = 1
 							for i=2, max_states do
