@@ -1314,11 +1314,9 @@ function export_treeview()
 	for x=1, #cells do
 		columns_height[x] = 0
 		for z=1, #cells[x] do
+			columns_height[x] = columns_height[x] +vertical_span*2 +font_height
 			for i=1, #state[x][z] do
 				columns_height[x] = columns_height[x] +vertical_span*2 +font_height*4 +line_span*3
-			end
-			for z=1, #state[x] do
-				columns_height[x] = columns_height[x] +vertical_span*2 +font_height
 			end
 		end
 		row3_height = math.max(columns_height[x], row3_height)
