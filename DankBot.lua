@@ -227,6 +227,7 @@ local function state_add(alt, wait, parent)
 				else --otherwise, we'll just assume we're using FCEUX
 					savestate.save(state[current_action][alt][maximum_index]["slot"])
 				end
+				state[current_action][alt][maximum_index]["parent"] = parent --this is necessary for drawing the graphical output
 				state[current_action][alt][maximum_index]["wait"] = wait
 				state[current_action][alt][maximum_index]["cycle"] = cycle
 				state[current_action][alt][maximum_index]["rng"] = rng
