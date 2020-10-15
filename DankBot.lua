@@ -1,4 +1,4 @@
---DankBot v2.1 by ThunderAxe31
+--DankBot v3.0 by ThunderAxe31
 --works with BizHawk (not 2.5 & 2.5.1) and FCEUX 2.2.3
 --optimized for use on Gambatte with equal_length_frames set to False
 --place this script into its own folder, because it's going generate multiple files
@@ -340,7 +340,7 @@ else
 		if console then
 			console.clear()
 		end
-		log_update("DankBot v2.1 by ThunderAxe31, session STARTED")
+		log_update("DankBot v3.0 by ThunderAxe31, session STARTED")
 		local rng_display = ""
 		if get_rng then
 			rng_display = ", RNG " .. string.format("%X", get_rng())
