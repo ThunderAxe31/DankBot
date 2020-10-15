@@ -1414,7 +1414,7 @@ function export_treeview()
 				local new_blue  = 0xC0
 				if cells[x][z][i]["fastest"] then
 					new_red   = 0x60
-					new_green = 0x80
+					new_green = 0xA0
 					new_blue  = 0xFF
 				end
 				
