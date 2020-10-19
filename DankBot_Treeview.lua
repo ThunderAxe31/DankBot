@@ -1545,7 +1545,6 @@ function export_treeview()
 	-- the following code deletes the existing file and writes the new bitmap file on disk
 	local file_img = io.open("Treeview.bmp", "w")
 	if not file_img then
-		io.close(file_img)
 		return false
 	end
 	io.output(file_img)
@@ -1557,7 +1556,6 @@ function export_treeview()
 	
 	file_img = io.open("Treeview.bmp", "ab")
 	if not file_img then
-		io.close(file_img)
 		return false
 	end
 	io.output(file_img)
