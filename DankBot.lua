@@ -475,6 +475,7 @@ while current_action <= #action do--this is the main code block that controls th
 			
 			if(current_action>=2) then
 				if export_treeview then
+					log_update("Updating Treeview.bmp file...")
 					if export_treeview() then
 						log_update("Treeview.bmp file updated.")
 					else
@@ -484,6 +485,7 @@ while current_action <= #action do--this is the main code block that controls th
 					log_update("ERROR: Treeview.lua not found, unable to export Treeview.bmp")
 				else
 					if export_treeview then
+						log_update("Updating Treeview.bmp file...")
 						if export_treeview() then
 							log_update("Treeview.bmp file updated.")
 						else
