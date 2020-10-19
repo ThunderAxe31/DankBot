@@ -1208,10 +1208,18 @@ local function draw_line(red, green, blue, canvas, x0, y0, x1, y1)
             x0 = x0 + stepx
             fraction = fraction + dy
             if (canvas[y0] ~= nil) and (canvas[y0][x0] ~= nil) then
-				canvas[y0][x0] = {R=red, G=green, B=blue}
+				if stepy == 1 then
+					canvas[y0]  [x0]   = {R=red, G=green, B=blue}
+					canvas[y0+1][x0+1] = {R=red, G=green, B=blue}
+					canvas[y0+1][x0]   = {R=red, G=green, B=blue}
+				else
+					canvas[y0]  [x0+1] = {R=red, G=green, B=blue}
+					canvas[y0+1][x0]   = {R=red, G=green, B=blue}
+					canvas[y0][x0]     = {R=red, G=green, B=blue}
+				end
 			end
         end
-    else
+	else
         local fraction = dx - bit.rshift(dy, 1)
         while y0 ~= y1 do
             if fraction >= 0 then
@@ -1221,7 +1229,15 @@ local function draw_line(red, green, blue, canvas, x0, y0, x1, y1)
             y0 = y0 + stepy
             fraction = fraction + dx
             if (canvas[y0] ~= nil) and (canvas[y0][x0] ~= nil) then
-				canvas[y0][x0] = {R=red, G=green, B=blue}
+				if stepy == 1 then
+					canvas[y0]  [x0]   = {R=red, G=green, B=blue}
+					canvas[y0+1][x0+1] = {R=red, G=green, B=blue}
+					canvas[y0]  [x0+1] = {R=red, G=green, B=blue}
+				else
+					canvas[y0]  [x0+1] = {R=red, G=green, B=blue}
+					canvas[y0+1][x0]   = {R=red, G=green, B=blue}
+					canvas[y0]  [x0]   = {R=red, G=green, B=blue}
+				end
 			end
         end
     end
@@ -1438,9 +1454,6 @@ function export_treeview()
 					end
 				end
 				draw_line(new_red, new_green, new_blue, canvas,	cells[x][z][i]["x_center"]  , cells[x][z][i]["y_center"]  , x2  , y2)
-				draw_line(new_red, new_green, new_blue, canvas,	cells[x][z][i]["x_center"]+1, cells[x][z][i]["y_center"]+1, x2+1, y2+1)
-				draw_line(new_red, new_green, new_blue, canvas,	cells[x][z][i]["x_center"]+1, cells[x][z][i]["y_center"]  , x2+1, y2  )
-				draw_line(new_red, new_green, new_blue, canvas,	cells[x][z][i]["x_center"]  , cells[x][z][i]["y_center"]+1, x2  , y2+1)
 			end
 		end
 	end
