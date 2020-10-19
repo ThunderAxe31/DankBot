@@ -1195,8 +1195,31 @@ local function draw_line(red, green, blue, canvas, x0, y0, x1, y1)
         stepx = 1
     end
 
-    if (canvas[y0] ~= nil) and (canvas[y0][x0] ~= nil) then
-		canvas[y0][x0] = {R=red, G=green, B=blue}
+    if (canvas[y0-2] ~= nil) and (canvas[y0-2][x0-2] ~= nil) and (canvas[y0+3] ~= nil) and (canvas[y0+3][x0+3] ~= nil) then
+		canvas[y0]  [x0]   = {R=red, G=green, B=blue}
+		canvas[y0+1][x0]   = {R=red, G=green, B=blue}
+		canvas[y0]  [x0+1] = {R=red, G=green, B=blue}
+		canvas[y0+1][x0+1] = {R=red, G=green, B=blue}
+		canvas[y0-1][x0]   = {R=red, G=green, B=blue}
+		canvas[y0-2][x0]   = {R=red, G=green, B=blue}
+		canvas[y0+2][x0]   = {R=red, G=green, B=blue}
+		canvas[y0+3][x0]   = {R=red, G=green, B=blue}
+		canvas[y0-1][x0+1] = {R=red, G=green, B=blue}
+		canvas[y0-2][x0+1] = {R=red, G=green, B=blue}
+		canvas[y0+2][x0+1] = {R=red, G=green, B=blue}
+		canvas[y0+3][x0+1] = {R=red, G=green, B=blue}
+		canvas[y0]  [x0-1] = {R=red, G=green, B=blue}
+		canvas[y0]  [x0-2] = {R=red, G=green, B=blue}
+		canvas[y0]  [x0+2] = {R=red, G=green, B=blue}
+		canvas[y0]  [x0+3] = {R=red, G=green, B=blue}
+		canvas[y0+1][x0-1] = {R=red, G=green, B=blue}
+		canvas[y0+1][x0-2] = {R=red, G=green, B=blue}
+		canvas[y0+1][x0+2] = {R=red, G=green, B=blue}
+		canvas[y0+1][x0+3] = {R=red, G=green, B=blue}
+		canvas[y0-1][x0-1] = {R=red, G=green, B=blue}
+		canvas[y0-1][x0+2] = {R=red, G=green, B=blue}
+		canvas[y0+2][x0+2] = {R=red, G=green, B=blue}
+		canvas[y0+2][x0-1] = {R=red, G=green, B=blue}
 	end
     if dx > dy then
         local fraction = dy - bit.rshift(dx, 1)
@@ -1453,7 +1476,34 @@ function export_treeview()
 						end
 					end
 				end
-				draw_line(new_red, new_green, new_blue, canvas,	cells[x][z][i]["x_center"]  , cells[x][z][i]["y_center"]  , x2  , y2)
+				draw_line(new_red, new_green, new_blue, canvas,	cells[x][z][i]["x_center"], cells[x][z][i]["y_center"], x2, y2)
+				
+				if (x==2) and (canvas[y2-2] ~= nil) and (canvas[y2-2][x2-2] ~= nil) and (canvas[y2+3] ~= nil) and (canvas[y2+3][x2+3] ~= nil) then
+					canvas[y2]  [x2]   = {R=new_red, G=new_green, B=new_blue}
+					canvas[y2+1][x2]   = {R=new_red, G=new_green, B=new_blue}
+					canvas[y2]  [x2+1] = {R=new_red, G=new_green, B=new_blue}
+					canvas[y2+1][x2+1] = {R=new_red, G=new_green, B=new_blue}
+					canvas[y2-1][x2]   = {R=new_red, G=new_green, B=new_blue}
+					canvas[y2-2][x2]   = {R=new_red, G=new_green, B=new_blue}
+					canvas[y2+2][x2]   = {R=new_red, G=new_green, B=new_blue}
+					canvas[y2+3][x2]   = {R=new_red, G=new_green, B=new_blue}
+					canvas[y2-1][x2+1] = {R=new_red, G=new_green, B=new_blue}
+					canvas[y2-2][x2+1] = {R=new_red, G=new_green, B=new_blue}
+					canvas[y2+2][x2+1] = {R=new_red, G=new_green, B=new_blue}
+					canvas[y2+3][x2+1] = {R=new_red, G=new_green, B=new_blue}
+					canvas[y2]  [x2-1] = {R=new_red, G=new_green, B=new_blue}
+					canvas[y2]  [x2-2] = {R=new_red, G=new_green, B=new_blue}
+					canvas[y2]  [x2+2] = {R=new_red, G=new_green, B=new_blue}
+					canvas[y2]  [x2+3] = {R=new_red, G=new_green, B=new_blue}
+					canvas[y2+1][x2-1] = {R=new_red, G=new_green, B=new_blue}
+					canvas[y2+1][x2-2] = {R=new_red, G=new_green, B=new_blue}
+					canvas[y2+1][x2+2] = {R=new_red, G=new_green, B=new_blue}
+					canvas[y2+1][x2+3] = {R=new_red, G=new_green, B=new_blue}
+					canvas[y2-1][x2-1] = {R=new_red, G=new_green, B=new_blue}
+					canvas[y2-1][x2+2] = {R=new_red, G=new_green, B=new_blue}
+					canvas[y2+2][x2+2] = {R=new_red, G=new_green, B=new_blue}
+					canvas[y2+2][x2-1] = {R=new_red, G=new_green, B=new_blue}
+				end
 			end
 		end
 	end
