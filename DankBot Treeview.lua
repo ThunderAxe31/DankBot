@@ -1178,24 +1178,24 @@ end
 
 local function draw_line(red, green, blue, canvas, x0, y0, x1, y1)
 	local dx = x1 - x0;
-    local dy = y1 - y0;
-    local stepx, stepy
-
-    if dy < 0 then
-        dy = -dy
-        stepy = -1
-    else
-        stepy = 1
-    end
-
-    if dx < 0 then
-        dx = -dx
-        stepx = -1
-    else
-        stepx = 1
-    end
-
-    if (canvas[y0-2] ~= nil) and (canvas[y0-2][x0-2] ~= nil) and (canvas[y0+3] ~= nil) and (canvas[y0+3][x0+3] ~= nil) then
+	local dy = y1 - y0;
+	local stepx, stepy
+	
+	if dy < 0 then
+	    dy = -dy
+	    stepy = -1
+	else
+	    stepy = 1
+	end
+	
+	if dx < 0 then
+	    dx = -dx
+	    stepx = -1
+	else
+	    stepx = 1
+	end
+	
+	if (canvas[y0-2] ~= nil) and (canvas[y0-2][x0-2] ~= nil) and (canvas[y0+3] ~= nil) and (canvas[y0+3][x0+3] ~= nil) then
 		canvas[y0]  [x0]   = {R=red, G=green, B=blue}
 		canvas[y0+1][x0]   = {R=red, G=green, B=blue}
 		canvas[y0]  [x0+1] = {R=red, G=green, B=blue}
@@ -1221,16 +1221,16 @@ local function draw_line(red, green, blue, canvas, x0, y0, x1, y1)
 		canvas[y0+2][x0+2] = {R=red, G=green, B=blue}
 		canvas[y0+2][x0-1] = {R=red, G=green, B=blue}
 	end
-    if dx > dy then
-        local fraction = dy - bit.rshift(dx, 1)
-        while x0 ~= x1 do
-            if fraction >= 0 then
-                y0 = y0 + stepy
-                fraction = fraction - dx
-            end
-            x0 = x0 + stepx
-            fraction = fraction + dy
-            if (canvas[y0] ~= nil) and (canvas[y0][x0] ~= nil) then
+	if dx > dy then
+	    local fraction = dy - bit.rshift(dx, 1)
+	    while x0 ~= x1 do
+	        if fraction >= 0 then
+	            y0 = y0 + stepy
+	            fraction = fraction - dx
+	        end
+	        x0 = x0 + stepx
+	        fraction = fraction + dy
+	        if (canvas[y0] ~= nil) and (canvas[y0][x0] ~= nil) then
 				if stepy == 1 then
 					canvas[y0]  [x0]   = {R=red, G=green, B=blue}
 					canvas[y0+1][x0+1] = {R=red, G=green, B=blue}
@@ -1241,17 +1241,17 @@ local function draw_line(red, green, blue, canvas, x0, y0, x1, y1)
 					canvas[y0][x0]     = {R=red, G=green, B=blue}
 				end
 			end
-        end
+	    end
 	else
-        local fraction = dx - bit.rshift(dy, 1)
-        while y0 ~= y1 do
-            if fraction >= 0 then
-                x0 = x0 + stepx
-                fraction = fraction - dy
-            end
-            y0 = y0 + stepy
-            fraction = fraction + dx
-            if (canvas[y0] ~= nil) and (canvas[y0][x0] ~= nil) then
+	    local fraction = dx - bit.rshift(dy, 1)
+	    while y0 ~= y1 do
+	        if fraction >= 0 then
+	            x0 = x0 + stepx
+	            fraction = fraction - dy
+	        end
+	        y0 = y0 + stepy
+	        fraction = fraction + dx
+	        if (canvas[y0] ~= nil) and (canvas[y0][x0] ~= nil) then
 				if stepy == 1 then
 					canvas[y0]  [x0]   = {R=red, G=green, B=blue}
 					canvas[y0+1][x0+1] = {R=red, G=green, B=blue}
@@ -1262,8 +1262,8 @@ local function draw_line(red, green, blue, canvas, x0, y0, x1, y1)
 					canvas[y0]  [x0]   = {R=red, G=green, B=blue}
 				end
 			end
-        end
-    end
+	    end
+	end
 end
 
 function export_treeview()
