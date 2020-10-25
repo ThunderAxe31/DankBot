@@ -129,6 +129,7 @@ elseif taseditor then --otherwise, we'll just assume we're using FCEUX
 end
 
 local current_action = 1
+local replacements   = 0 --counter for keeping track of how many states were replaced for botting an action
 
 local function close_session()
 	if current_action < #action+1 then
@@ -232,6 +233,7 @@ local function state_add(alt, wait, parent)
 				state[current_action][alt][maximum_index]["cycle"] = cycle
 				state[current_action][alt][maximum_index]["rng"] = rng
 				log_update("   Replaced state " .. current_action .. "-" .. alt .. "-" .. maximum_index .. ", wait " .. wait .. time_unit .. cycle .. rng_display)
+				replacements = replacements +1
 			end
 		end
 	end
@@ -240,6 +242,12 @@ end
 local function act(action_type, alts)
 	for alt = 1, #action[current_action] do
 		log_update(" Action " .. current_action .. ", Type: " .. action[current_action].func.name .. ", Alt " .. alt .. " of " .. #action[current_action])
+		
+		replacements = 0
+		local min_wait   = action[current_action][alt]["custom_min_wait"] or global_min_wait
+		local max_wait   = action[current_action][alt]["custom_wait"] or action[current_action][alt]["custom_max_wait"] or global_max_wait
+		local max_states = action[current_action][alt]["custom_states"] or action[current_action][alt]["custom_max_states"] or global_max_states
+		
 		for alt_num = 1, #state[current_action-1] do
 			for state_num = 1, #state[current_action-1][alt_num] do
 				
@@ -257,11 +265,7 @@ local function act(action_type, alts)
 				end
 				
 				if action[current_action].func.prepare(alts[alt]) then
-					
-					local min_wait = action[current_action][alt]["custom_min_wait"] or global_min_wait
-					
-					local max_wait = action[current_action][alt]["custom_wait"] or action[current_action][alt]["custom_max_wait"] or global_max_wait
-					
+						
 					local wait_step = action[current_action][alt]["custom_wait_step"] or global_wait_step
 					
 					local temp_state = 0
@@ -282,8 +286,6 @@ local function act(action_type, alts)
 						for i=1, wait do--we wait for a given amount of frames
 							emu.frameadvance()
 						end
-						
-						local max_states = action[current_action][alt]["custom_states"] or action[current_action][alt]["custom_max_states"] or global_max_states
 						
 						if state[current_action][alt][max_states] ~= nil then
 							local maximum_index = 1
@@ -311,6 +313,19 @@ local function act(action_type, alts)
 		end
 		if state[current_action][alt][1] == nil then--check if this function call failed to progress the botting
 			log_update("  WARNING: Failed to meet requirements for Alt " .. alt)
+		else
+			local low_wait = max_wait
+			local hig_wait = min_wait
+			local avg_wait = 0
+			
+			for i=1, #state[current_action][alt] do
+				low_wait = math.min(low_wait, state[current_action][alt][i]["wait"])
+				hig_wait = math.max(hig_wait, state[current_action][alt][i]["wait"])
+				avg_wait = (state[current_action][alt][i]["wait"] +avg_wait*(i-1) ) /i
+			end
+			
+			log_update(" States made: " .. #state[current_action][alt] .. "/" .. max_states .. " replaced x" .. replacements
+			.. ", wait: " .. low_wait .. "-" .. hig_wait .. " mean " .. string.format("%.2f", avg_wait))
 		end
 	end
 end
@@ -446,7 +461,7 @@ while current_action <= #action do--this is the main code block that controls th
 					rng = get_rng() --this function must be present in route.lua
 					rng_display = ", RNG " .. string.format("%X", state[current_action][minimum_alt][minumum_index]["rng"])
 				end
-				log_update(" Closing with state " .. current_action .. "-" .. minimum_alt .. "-" .. minumum_index .. ", wait " .. state[current_action][minimum_alt][minumum_index]["wait"] .. time_unit .. state[current_action][minimum_alt][minumum_index]["cycle"] .. rng_display)
+				log_update("Closing with state " .. current_action .. "-" .. minimum_alt .. "-" .. minumum_index .. ", wait " .. state[current_action][minimum_alt][minumum_index]["wait"] .. time_unit .. state[current_action][minimum_alt][minumum_index]["cycle"] .. rng_display)
 				
 				if tastudio then --simple way of confirming if we're using BizHawk
 					savestate.load(state[current_action][minimum_alt][minumum_index]["slot"], true)
