@@ -441,7 +441,12 @@ while current_action <= #action do--this is the main code block that controls th
 						end
 					end
 				end
-				log_update(" Closing with state " .. current_action .. "-" .. minimum_alt .. "-" .. minumum_index .. time_unit .. state[current_action][minimum_alt][minumum_index]["cycle"])
+				local rng_display = ""
+				if get_rng then
+					rng = get_rng() --this function must be present in route.lua
+					rng_display = ", RNG " .. string.format("%X", state[current_action][minimum_alt][minumum_index]["rng"])
+				end
+				log_update(" Closing with state " .. current_action .. "-" .. minimum_alt .. "-" .. minumum_index .. ", wait " .. state[current_action][minimum_alt][minumum_index]["wait"] .. time_unit .. state[current_action][minimum_alt][minumum_index]["cycle"] .. rng_display)
 				
 				if tastudio then --simple way of confirming if we're using BizHawk
 					savestate.load(state[current_action][minimum_alt][minumum_index]["slot"], true)
