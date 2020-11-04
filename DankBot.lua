@@ -197,24 +197,20 @@ local function state_add(alt, wait, parent)
 		local max_states = action[current_action][alt]["custom_states"] or action[current_action][alt]["custom_max_states"] or global_max_states
 		
 		if state[current_action][alt][max_states] == nil then
-			for i=1, max_states do
-				if state[current_action][alt][i] == nil then
-					state[current_action][alt][i] = {}
-					if tastudio then --simple way of confirming if we're using BizHawk
-						state[current_action][alt][i]["slot"] = current_action .. "-" .. alt .. "-" .. i .. ".State"
-						savestate.save(state[current_action][alt][i]["slot"], true)
-					else --otherwise, we'll just assume we're using FCEUX
-						state[current_action][alt][i]["slot"] = savestate.object()
-						savestate.save(state[current_action][alt][i]["slot"])
-					end
-					state[current_action][alt][i]["parent"] = parent --this is necessary for drawing the graphical output
-					state[current_action][alt][i]["wait"] = wait
-					state[current_action][alt][i]["cycle"] = cycle
-					state[current_action][alt][i]["rng"] = rng
-					log_update("   Added state " .. current_action .. "-" .. alt .. "-" .. i .. ", wait " .. wait .. time_unit .. cycle .. rng_display)
-					break
-				end
+			local new_state = #state[current_action][alt] +1
+			state[current_action][alt][new_state] = {}
+			if tastudio then --simple way of confirming if we're using BizHawk
+				state[current_action][alt][new_state]["slot"] = current_action .. "-" .. alt .. "-" .. new_state .. ".State"
+				savestate.save(state[current_action][alt][new_state]["slot"], true)
+			else --otherwise, we'll just assume we're using FCEUX
+				state[current_action][alt][new_state]["slot"] = savestate.object()
+				savestate.save(state[current_action][alt][new_state]["slot"])
 			end
+			state[current_action][alt][new_state]["parent"] = parent --this is necessary for drawing the graphical output
+			state[current_action][alt][new_state]["wait"] = wait
+			state[current_action][alt][new_state]["cycle"] = cycle
+			state[current_action][alt][new_state]["rng"] = rng
+			log_update("   Added state " .. current_action .. "-" .. alt .. "-" .. new_state .. ", wait " .. wait .. time_unit .. cycle .. rng_display)
 		else
 			local maximum_index = 1
 			for i=2, max_states do
