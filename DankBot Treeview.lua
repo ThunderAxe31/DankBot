@@ -1552,7 +1552,7 @@ function export_treeview()
 					new_blue  =   0
 				else
 					new_red   = 255
-					new_green = math.max(255, cells[i][z][x]["wait"]*15 -510)
+					new_green = math.max(0, 765 -cells[i][z][x]["wait"]*15)
 					new_blue  =   0
 				end
 				fill_color(new_red, new_green, new_blue, file_img,image_height,image_width,
