@@ -415,6 +415,8 @@ while current_action <= #action do--this is the main code block that controls th
 	
 	act(action[current_action].func, action[current_action])
 	
+	collectgarbage("collect") --manually clear unused memory
+	
 	local is_failed = true
 	for z=1, #state[current_action] do
 		if state[current_action][z][1] ~= nil then
