@@ -1409,6 +1409,8 @@ function export_treeview()
 		row3_height = math.max(columns_height[x], row3_height)
 	end
 	
+	collectgarbage("collect") --manually clear unused memory
+	
 	--this is where it begins writing the file
 	local image_width  = math.max(row1_width, row2_width, row3_width)
 	local image_height = row1_height +row2_height +row3_height
@@ -1655,6 +1657,9 @@ function export_treeview()
 	if file_img then
 		io.close(file_img)
 	end
+	
+	collectgarbage("collect") --manually clear unused memory
+	
 	return true
 end
 
