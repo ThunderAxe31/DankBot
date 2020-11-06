@@ -176,7 +176,7 @@ local function state_add(alt, wait, parent)
 	local rng_display = ""
 	if get_rng then
 		rng = get_rng() --this function must be present in route.lua
-		rng_display = ", RNG " .. string.format("%X", rng)
+		rng_display = ", RNG " .. rng
 	end
 	
 	local is_double = false--this code block prevents creating double saves
@@ -354,7 +354,7 @@ else
 		log_update("DankBot v3.1 by ThunderAxe31, session STARTED")
 		local rng_display = ""
 		if get_rng then
-			rng_display = ", RNG " .. string.format("%X", get_rng())
+			rng_display = ", RNG " .. get_rng()
 		end
 		log_update(" Initializing state 0-1-1" .. time_unit .. cycle .. rng_display)
 	else --if we're using BizHawk and resume.lua exists, resume the suspended session
@@ -457,7 +457,7 @@ while current_action <= #action do--this is the main code block that controls th
 				local rng_display = ""
 				if get_rng then
 					rng = get_rng() --this function must be present in route.lua
-					rng_display = ", RNG " .. string.format("%X", state[current_action][minimum_alt][minumum_index]["rng"])
+					rng_display = ", RNG " .. state[current_action][minimum_alt][minumum_index]["rng"]
 				end
 				log_update("Closing with state " .. current_action .. "-" .. minimum_alt .. "-" .. minumum_index .. ", wait " .. state[current_action][minimum_alt][minumum_index]["wait"] .. time_unit .. state[current_action][minimum_alt][minumum_index]["cycle"] .. rng_display)
 				
