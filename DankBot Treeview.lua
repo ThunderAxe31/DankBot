@@ -1350,7 +1350,7 @@ function export_treeview()
 						cells[x][z][states_copied][1] = "State " .. x .. "-" .. z .. "-" .. i
 						cells[x][z][states_copied][2] = "Wait: "  .. state[x][z][i]["wait"]
 						cells[x][z][states_copied][3] = time_unit .. state[x][z][i]["cycle"]
-						cells[x][z][states_copied][4] = "RNG: "   .. string.format("%X", state[x][z][i]["rng"])
+						cells[x][z][states_copied][4] = "RNG: "   .. state[x][z][i]["rng"]
 						cells[x][z][states_copied]["cycle"] = state[x][z][i]["cycle"]
 						cells[x][z][states_copied]["wait"]  = state[x][z][i]["wait"]
 						cells[x][z][states_copied]["origin"] = {z, i}
