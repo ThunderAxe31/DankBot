@@ -492,16 +492,9 @@ while current_action <= #action do--this is the main code block that controls th
 			end
 			
 			if(current_action>=2) then
-				if export_treeview then
-					log_update("Updating Treeview.bmp file...")
-					if export_treeview() then
-						log_update("Treeview.bmp file updated.")
-					else
-						log_update("ERROR: Treeview.lua failed to export Treeview.bmp")
-					end
-				elseif not dofile("DankBot Treeview.lua") then
-					log_update("ERROR: Treeview.lua not found, unable to export Treeview.bmp")
-				else
+				local check_treeview = io.open("DankBot Treeview.lua", "r")
+				if check_treeview then
+					io.close(check_treeview)
 					if export_treeview then
 						log_update("Updating Treeview.bmp file...")
 						if export_treeview() then
@@ -509,9 +502,22 @@ while current_action <= #action do--this is the main code block that controls th
 						else
 							log_update("ERROR: Treeview.lua failed to export Treeview.bmp")
 						end
-					else
+					elseif not dofile("DankBot Treeview.lua") then
 						log_update("ERROR: Treeview.lua damaged, unable to export Treeview.bmp")
+					else
+						if export_treeview then
+							log_update("Updating Treeview.bmp file...")
+							if export_treeview() then
+								log_update("Treeview.bmp file updated.")
+							else
+								log_update("ERROR: Treeview.lua failed to export Treeview.bmp")
+							end
+						else
+							log_update("ERROR: Treeview.lua damaged, unable to export Treeview.bmp")
+						end
 					end
+				else
+					log_update("ERROR: Treeview.lua not found, unable to export Treeview.bmp")
 				end
 			end
 			
