@@ -1338,7 +1338,7 @@ function export_treeview()
 	local horizontal_span = 8
 	local vertical_span   = 8
 	local line_span	      = 2
-	local gradation_step  = 1
+	local gradation_step  = custom_gradation_step or 1
 	
 	local title = "DankBot Treeview v1.1 by ThunderAxe31"
 	
