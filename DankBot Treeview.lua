@@ -1504,6 +1504,7 @@ function export_treeview()
 	end
 	
 	--for now, save a blank canvas on disk
+	local bytes_to_write = 118
 	for y=image_height, 1, -1 do
 		for x=1, math.ceil(image_width/2) do
 			if not io.write("\0") then
@@ -1511,6 +1512,11 @@ function export_treeview()
 					io.close(file_img)
 				end
 				return false
+			end
+			bytes_to_write = bytes_to_write +1
+			if bytes_to_write >= 1048576 then
+				io.flush() --we flush the pending writing bytes, in order to avoid running out of memory when making a gigantic file
+				bytes_to_write = bytes_to_write %1048576 --let's neatly keep it to a multiple of hard disk sectors (4096 in most cases)
 			end
 		end
 		if not io.write(row_padding_data) then
@@ -1572,6 +1578,7 @@ function export_treeview()
 				row_offset = row_offset +vertical_span*2 +font_height*4 +line_span*3
 			end
 		end
+		file_img:flush()
 		
 		column_offset = column_offset +columns1_width[i] -- -horizontal_span/2 --add this to lessen the in-between-span
 	end
@@ -1620,6 +1627,7 @@ function export_treeview()
 				draw_dot(new_color_index, file_img, image_height, image_width, x2, y2)
 			end
 		end
+		file_img:flush()
 	end
 	
 	column_offset = 0
@@ -1652,6 +1660,7 @@ function export_treeview()
 				row_offset = row_offset +vertical_span*2 +font_height*4 +line_span*3
 			end
 		end
+		file_img:flush()
 		
 		column_offset = column_offset +columns1_width[i] -- -horizontal_span/2 --add this to lessen the in-between-span
 	end
