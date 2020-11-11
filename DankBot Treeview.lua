@@ -1505,24 +1505,14 @@ function export_treeview()
 	local bytes_to_write = 118
 	for y=image_height, 1, -1 do
 		for x=1, math.ceil(image_width/2) do
-			if not file_img:write("\0") then
-				if file_img then
-					io.close(file_img)
-				end
-				return false
-			end
+			file_img:write("\0")
 			bytes_to_write = bytes_to_write +1
 			if bytes_to_write >= 1048576 then
 				io.flush() --we flush the pending writing bytes, in order to avoid running out of memory when making a gigantic file
 				bytes_to_write = bytes_to_write %1048576 --let's neatly keep it to a multiple of hard disk sectors (4096 in most cases)
 			end
 		end
-		if not file_img:write(row_padding_data) then
-			if file_img then
-				io.close(file_img)
-			end
-			return false
-		end
+		file_img:write(row_padding_data)
 	end
 	if file_img then
 		io.close(file_img)
