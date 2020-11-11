@@ -1442,8 +1442,7 @@ function export_treeview()
 	if not file_img then
 		return false
 	end
-	io.output(file_img)
-	if not io.write("") then
+	if not file_img:write("") then
 		if file_img then
 			io.close(file_img)
 		end
@@ -1458,7 +1457,6 @@ function export_treeview()
 	if not file_img then
 		return false
 	end
-	io.output(file_img)
 	
 	--now, write the .bmp header
 	local row_padding = (4 -math.ceil(image_width/2)%4 )%4
@@ -1489,7 +1487,7 @@ function export_treeview()
 	local file_size_byte3 = bit_and(file_size, 0x00FF0000)   /0x10000
 	local file_size_byte4 = bit_and(file_size, 0xFF000000) /0x1000000
 	
-	if not io.write(
+	if not file_img:write(
 	"BM" .. string.char(file_size_byte1) .. string.char(file_size_byte2) .. string.char(file_size_byte3) .. string.char(file_size_byte4)
 	.. "\0\0\0\0\118\0\0\0\40\0\0\0" ..
 	string.char(bitmap_width_byte1) .. string.char(bitmap_width_byte2) .. string.char(bitmap_width_byte3) .. string.char(bitmap_width_byte4) ..
@@ -1507,7 +1505,7 @@ function export_treeview()
 	local bytes_to_write = 118
 	for y=image_height, 1, -1 do
 		for x=1, math.ceil(image_width/2) do
-			if not io.write("\0") then
+			if not file_img:write("\0") then
 				if file_img then
 					io.close(file_img)
 				end
@@ -1519,7 +1517,7 @@ function export_treeview()
 				bytes_to_write = bytes_to_write %1048576 --let's neatly keep it to a multiple of hard disk sectors (4096 in most cases)
 			end
 		end
-		if not io.write(row_padding_data) then
+		if not file_img:write(row_padding_data) then
 			if file_img then
 				io.close(file_img)
 			end
