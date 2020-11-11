@@ -1144,60 +1144,81 @@ Courier_size11[126]={
 0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0}
 
+local bit_and = bit.band or AND
+
 local function get_file_pos(image_height, image_width, x, y)
-	return 54 +(image_height -y)*(image_width*3 +image_width%4) +(x-1)*3
+	return 118 +(image_height -y)*(math.ceil(image_width/2) +(4 -math.ceil(image_width/2)%4 )%4) +math.floor((x-1)/2)
 end
 
-local function draw_dot(red, green, blue, file, image_height, image_width, x, y)
-	if ((y+3) < image_height) and ((x+3) < image_width) and ((y-2) > 0) and ((x-2) > 0) then
-		file:seek("set", get_file_pos(image_height, image_width, x, y))
-		file:write(string.char(blue) .. string.char(green) .. string.char(red))
-		file:seek("set", get_file_pos(image_height, image_width, x, y+1))
-		file:write(string.char(blue) .. string.char(green) .. string.char(red))
-		file:seek("set", get_file_pos(image_height, image_width, x+1, y))
-		file:write(string.char(blue) .. string.char(green) .. string.char(red))
-		file:seek("set", get_file_pos(image_height, image_width, x+1, y+1))
-		file:write(string.char(blue) .. string.char(green) .. string.char(red))
-		file:seek("set", get_file_pos(image_height, image_width, x, y-1))
-		file:write(string.char(blue) .. string.char(green) .. string.char(red))
-		file:seek("set", get_file_pos(image_height, image_width, x, y-2))
-		file:write(string.char(blue) .. string.char(green) .. string.char(red))
-		file:seek("set", get_file_pos(image_height, image_width, x, y+2))
-		file:write(string.char(blue) .. string.char(green) .. string.char(red))
-		file:seek("set", get_file_pos(image_height, image_width, x, y+3))
-		file:write(string.char(blue) .. string.char(green) .. string.char(red))
-		file:seek("set", get_file_pos(image_height, image_width, x+1, y-1))
-		file:write(string.char(blue) .. string.char(green) .. string.char(red))
-		file:seek("set", get_file_pos(image_height, image_width, x+1, y-2))
-		file:write(string.char(blue) .. string.char(green) .. string.char(red))
-		file:seek("set", get_file_pos(image_height, image_width, x+1, y+2))
-		file:write(string.char(blue) .. string.char(green) .. string.char(red))
-		file:seek("set", get_file_pos(image_height, image_width, x+1, y+3))
-		file:write(string.char(blue) .. string.char(green) .. string.char(red))
-		file:seek("set", get_file_pos(image_height, image_width, x-1, y))
-		file:write(string.char(blue) .. string.char(green) .. string.char(red))
-		file:seek("set", get_file_pos(image_height, image_width, x-2, y))
-		file:write(string.char(blue) .. string.char(green) .. string.char(red))
-		file:seek("set", get_file_pos(image_height, image_width, x+2, y))
-		file:write(string.char(blue) .. string.char(green) .. string.char(red))
-		file:seek("set", get_file_pos(image_height, image_width, x+3, y))
-		file:write(string.char(blue) .. string.char(green) .. string.char(red))
-		file:seek("set", get_file_pos(image_height, image_width, x-1, y+1))
-		file:write(string.char(blue) .. string.char(green) .. string.char(red))
-		file:seek("set", get_file_pos(image_height, image_width, x-2, y+1))
-		file:write(string.char(blue) .. string.char(green) .. string.char(red))
-		file:seek("set", get_file_pos(image_height, image_width, x+2, y+1))
-		file:write(string.char(blue) .. string.char(green) .. string.char(red))
-		file:seek("set", get_file_pos(image_height, image_width, x+3, y+1))
-		file:write(string.char(blue) .. string.char(green) .. string.char(red))
-		file:seek("set", get_file_pos(image_height, image_width, x-1, y-1))
-		file:write(string.char(blue) .. string.char(green) .. string.char(red))
-		file:seek("set", get_file_pos(image_height, image_width, x+2, y-1))
-		file:write(string.char(blue) .. string.char(green) .. string.char(red))
-		file:seek("set", get_file_pos(image_height, image_width, x+2, y+2))
-		file:write(string.char(blue) .. string.char(green) .. string.char(red))
-		file:seek("set", get_file_pos(image_height, image_width, x-1, y+2))
-		file:write(string.char(blue) .. string.char(green) .. string.char(red))
+local function draw_pixel(color_index, file, image_height, image_width, x, y)
+	file:seek("set", get_file_pos(image_height, image_width, x, y))
+	local read_byte = string.byte(file:read(1))
+	file:seek("cur",-1)
+	if x%2 == 1 then
+		file:write(string.char(bit_and(read_byte,0x0F)+color_index*0x10))
+	else
+		file:write(string.char(bit_and(read_byte,0xF0)+color_index))
+	end
+end
+
+local function draw_dot(color_index, file, image_height, image_width, x, y)
+	if ((y+3) < image_height) and ((x+3) < image_width) and ((y-2) > 0) and ((x-2) > 0) then --failsafe
+		if x%2 == 1 then
+			file:seek("set", get_file_pos(image_height, image_width, x, y-2))
+			file:write(string.char(color_index*0x10 +color_index))
+			file:seek("set", get_file_pos(image_height, image_width, x, y-1))
+			file:write(string.char(color_index*0x10 +color_index))
+			
+			file:seek("set", get_file_pos(image_height, image_width, x-2, y))
+			file:write(string.char(color_index*0x10 +color_index))
+			file:seek("set", get_file_pos(image_height, image_width, x,   y))
+			file:write(string.char(color_index*0x10 +color_index))
+			file:seek("set", get_file_pos(image_height, image_width, x+2, y))
+			file:write(string.char(color_index*0x10 +color_index))
+			
+			file:seek("set", get_file_pos(image_height, image_width, x-2, y+1))
+			file:write(string.char(color_index*0x10 +color_index))
+			file:seek("set", get_file_pos(image_height, image_width, x,   y+1))
+			file:write(string.char(color_index*0x10 +color_index))
+			file:seek("set", get_file_pos(image_height, image_width, x+2, y+1))
+			file:write(string.char(color_index*0x10 +color_index))
+			
+			file:seek("set", get_file_pos(image_height, image_width, x, y+2))
+			file:write(string.char(color_index*0x10 +color_index))
+			file:seek("set", get_file_pos(image_height, image_width, x, y+3))
+			file:write(string.char(color_index*0x10 +color_index))
+			
+			draw_pixel(color_index, file, image_height, image_width, x-1, y-1)
+			draw_pixel(color_index, file, image_height, image_width, x+2, y-1)
+			draw_pixel(color_index, file, image_height, image_width, x-1, y+2)
+			draw_pixel(color_index, file, image_height, image_width, x+2, y+2)
+		else
+			file:seek("set", get_file_pos(image_height, image_width, x-1, y-1))
+			file:write(string.char(color_index*0x10 +color_index))
+			file:seek("set", get_file_pos(image_height, image_width, x+1, y-1))
+			file:write(string.char(color_index*0x10 +color_index))
+			file:seek("set", get_file_pos(image_height, image_width, x-1, y))
+			file:write(string.char(color_index*0x10 +color_index))
+			file:seek("set", get_file_pos(image_height, image_width, x+1, y))
+			file:write(string.char(color_index*0x10 +color_index))
+			file:seek("set", get_file_pos(image_height, image_width, x-1, y+1))
+			file:write(string.char(color_index*0x10 +color_index))
+			file:seek("set", get_file_pos(image_height, image_width, x+1, y+1))
+			file:write(string.char(color_index*0x10 +color_index))
+			file:seek("set", get_file_pos(image_height, image_width, x-1, y+2))
+			file:write(string.char(color_index*0x10 +color_index))
+			file:seek("set", get_file_pos(image_height, image_width, x+1, y+2))
+			file:write(string.char(color_index*0x10 +color_index))
+			
+			draw_pixel(color_index, file, image_height, image_width, x  , y-2)
+			draw_pixel(color_index, file, image_height, image_width, x+1, y-2)
+			draw_pixel(color_index, file, image_height, image_width, x-2, y)
+			draw_pixel(color_index, file, image_height, image_width, x+3, y)
+			draw_pixel(color_index, file, image_height, image_width, x-2, y+1)
+			draw_pixel(color_index, file, image_height, image_width, x+3, y+1)
+			draw_pixel(color_index, file, image_height, image_width, x  , y+3)
+			draw_pixel(color_index, file, image_height, image_width, x+1, y+3)
+		end
 	end
 end
 
@@ -1210,32 +1231,48 @@ local function draw_string(text, font, file, image_height, image_width, x_pos, y
 		
 		local pixel_index = 1
 		for y=1, font_height do
-			for x=1, font_width do
-				if font[character][pixel_index] == 1 then
-					if ((y_pos +y) < image_height) and ((x_pos +x) < image_width) then --failsafe in case of attempt of drawing out of bounds
+			for x=1, font_width, 2 do
+				if ((y_pos +y) < image_height) and ((x_pos +x) < image_width) then --failsafe in case of attempt of drawing out of bounds
+					if (font[character][pixel_index] == 1) and (font[character][pixel_index+1] == 1) then
 						file:seek("set", get_file_pos(image_height, image_width, x_pos +x, y_pos +y))
-						file:write(string.char(0x00) .. string.char(0x00) .. string.char(0x00))
+						file:write(string.char(0x11))
+					elseif (font[character][pixel_index] == 1) then
+						file:seek("set", get_file_pos(image_height, image_width, x_pos +x, y_pos +y))
+						local read_byte = string.byte(file:read(1))
+						file:seek("cur",-1)
+						file:write(string.char(bit_and(read_byte,0x0F)+0x10))
+					elseif (font[character][pixel_index+1] == 1) then
+						file:seek("set", get_file_pos(image_height, image_width, x_pos +x, y_pos +y))
+						local read_byte = string.byte(file:read(1))
+						file:seek("cur",-1)
+						file:write(string.char(bit_and(read_byte,0xF0)+0x01))
 					end
 				end
-				pixel_index = pixel_index +1
+				pixel_index = pixel_index +2
 			end
 		end
 		x_pos = x_pos +font_width
 	end
 end
 
-local function fill_color(red, green, blue, file, image_height, image_width, x_start, y_start, x_dist, y_dist)
+local function fill_color(color_index, file, image_height, image_width, x_start, y_start, x_dist, y_dist)
 	for y=1, y_dist do
-		for x=1, x_dist do
+		for x=1, x_dist-x_dist%2, 2 do
 			if ((y_start +y) <= image_height) and ((x_start +x) <= image_width) then --failsafe in case of attempt of drawing out of bounds
 				file:seek("set", get_file_pos(image_height, image_width, x_start +x, y_start +y))
-				file:write(string.char(blue) .. string.char(green) .. string.char(red))
+				file:write(string.char(color_index*0x10 +color_index))
+			end
+		end
+		if x_dist%2 == 1 then
+			if ((y_start +y_dist) <= image_height) and ((x_start +x_dist) <= image_width) then --failsafe
+				file:seek("set", get_file_pos(image_height, image_width, x_start +x_dist, y_start +y_dist))
+				file:write(string.char(color_index*0x10))
 			end
 		end
 	end
 end
 
-local function draw_line(red, green, blue, file, image_height, image_width, x0, y0, x1, y1)
+local function draw_line(color_index, file, image_height, image_width, x0, y0, x1, y1)
 	local dx = x1 - x0;
 	local dy = y1 - y0;
 	local stepx, stepy
@@ -1254,7 +1291,7 @@ local function draw_line(red, green, blue, file, image_height, image_width, x0, 
 		stepx = 1
 	end
 	
-	draw_dot(red, green, blue, file, image_height, image_width, x0, y0)
+	draw_dot(color_index, file, image_height, image_width, x0, y0)
 	
 	if dx > dy then
 		local fraction = dy - bit.rshift(dx, 1)
@@ -1266,20 +1303,12 @@ local function draw_line(red, green, blue, file, image_height, image_width, x0, 
 			x0 = x0 + stepx
 			fraction = fraction + dy
 			if (y0 < image_height) and (x0 < image_width) then --failsafe in case of attempt of drawing out of bounds
+				draw_pixel(color_index, file, image_height, image_width, x0, y0)
+				draw_pixel(color_index, file, image_height, image_width, x0, y0+1)
 				if stepy == 1 then
-					file:seek("set", get_file_pos(image_height, image_width, x0, y0))
-					file:write(string.char(blue) .. string.char(green) .. string.char(red))
-					file:seek("set", get_file_pos(image_height, image_width, x0+1, y0+1))
-					file:write(string.char(blue) .. string.char(green) .. string.char(red))
-					file:seek("set", get_file_pos(image_height, image_width, x0, y0+1))
-					file:write(string.char(blue) .. string.char(green) .. string.char(red))
+					draw_pixel(color_index, file, image_height, image_width, x0+1, y0+1)
 				else
-					file:seek("set", get_file_pos(image_height, image_width, x0+1, y0))
-					file:write(string.char(blue) .. string.char(green) .. string.char(red))
-					file:seek("set", get_file_pos(image_height, image_width, x0, y0+1))
-					file:write(string.char(blue) .. string.char(green) .. string.char(red))
-					file:seek("set", get_file_pos(image_height, image_width, x0, y0))
-					file:write(string.char(blue) .. string.char(green) .. string.char(red))
+					draw_pixel(color_index, file, image_height, image_width, x0+1, y0)
 				end
 			end
 		end
@@ -1293,20 +1322,12 @@ local function draw_line(red, green, blue, file, image_height, image_width, x0, 
 			y0 = y0 + stepy
 			fraction = fraction + dx
 			if (y0 < image_height) and (x0 < image_width) then --failsafe in case of attempt of drawing out of bounds
+				draw_pixel(color_index, file, image_height, image_width, x0,   y0)
+				draw_pixel(color_index, file, image_height, image_width, x0+1, y0)
 				if stepy == 1 then
-					file:seek("set", get_file_pos(image_height, image_width, x0, y0))
-					file:write(string.char(blue) .. string.char(green) .. string.char(red))
-					file:seek("set", get_file_pos(image_height, image_width, x0+1, y0+1))
-					file:write(string.char(blue) .. string.char(green) .. string.char(red))
-					file:seek("set", get_file_pos(image_height, image_width, x0+1, y0))
-					file:write(string.char(blue) .. string.char(green) .. string.char(red))
+					draw_pixel(color_index, file, image_height, image_width, x0+1, y0+1)
 				else
-					file:seek("set", get_file_pos(image_height, image_width, x0+1, y0))
-					file:write(string.char(blue) .. string.char(green) .. string.char(red))
-					file:seek("set", get_file_pos(image_height, image_width, x0, y0+1))
-					file:write(string.char(blue) .. string.char(green) .. string.char(red))
-					file:seek("set", get_file_pos(image_height, image_width, x0, y0))
-					file:write(string.char(blue) .. string.char(green) .. string.char(red))
+					draw_pixel(color_index, file, image_height, image_width, x0,   y0+1)
 				end
 			end
 		end
@@ -1314,9 +1335,10 @@ local function draw_line(red, green, blue, file, image_height, image_width, x0, 
 end
 
 function export_treeview()
-	local horizontal_span =  8
-	local vertical_span   =  8
-	local line_span	   =  2
+	local horizontal_span = 8
+	local vertical_span   = 8
+	local line_span	      = 2
+	local gradation_step  = 1
 	
 	local title = "DankBot Treeview v1.1 by ThunderAxe31"
 	
@@ -1439,9 +1461,7 @@ function export_treeview()
 	io.output(file_img)
 	
 	--now, write the .bmp header
-	local bit_and = bit.band or AND
-	
-	local row_padding = image_width%4
+	local row_padding = (4 -math.ceil(image_width/2)%4 )%4
 	local row_padding_data = ""
 	for i=1, row_padding do
 		row_padding_data = row_padding_data .. "\0"
@@ -1457,13 +1477,13 @@ function export_treeview()
 	local bitmap_height_byte3 = bit_and(image_height, 0x00FF0000)   /0x10000
 	local bitmap_height_byte4 = bit_and(image_height, 0xFF000000) /0x1000000
 	
-	local bitmap_size = (image_width*3 +row_padding) *image_height
+	local bitmap_size = (math.ceil(image_width/2) +row_padding) *image_height
 	local bitmap_size_byte1 = bit_and(bitmap_size, 0x000000FF)
 	local bitmap_size_byte2 = bit_and(bitmap_size, 0x0000FF00)     /0x100
 	local bitmap_size_byte3 = bit_and(bitmap_size, 0x00FF0000)   /0x10000
 	local bitmap_size_byte4 = bit_and(bitmap_size, 0xFF000000) /0x1000000
 	
-	local file_size = bitmap_size +54
+	local file_size = bitmap_size +118
 	local file_size_byte1 = bit_and(file_size, 0x000000FF)
 	local file_size_byte2 = bit_and(file_size, 0x0000FF00)     /0x100
 	local file_size_byte3 = bit_and(file_size, 0x00FF0000)   /0x10000
@@ -1471,12 +1491,12 @@ function export_treeview()
 	
 	if not io.write(
 	"BM" .. string.char(file_size_byte1) .. string.char(file_size_byte2) .. string.char(file_size_byte3) .. string.char(file_size_byte4)
-	.. "\0\0\0\0\54\0\0\0\40\0\0\0" ..
+	.. "\0\0\0\0\118\0\0\0\40\0\0\0" ..
 	string.char(bitmap_width_byte1) .. string.char(bitmap_width_byte2) .. string.char(bitmap_width_byte3) .. string.char(bitmap_width_byte4) ..
 	string.char(bitmap_height_byte1) .. string.char(bitmap_height_byte2) .. string.char(bitmap_height_byte3) .. string.char(bitmap_height_byte4) ..
-	"\1\0\24\0\0\0\0\0" ..
+	"\1\0\4\0\0\0\0\0" ..
 	string.char(bitmap_size_byte1) .. string.char(bitmap_size_byte2) .. string.char(bitmap_size_byte3) .. string.char(bitmap_size_byte4) ..
-	"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0") then
+	"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\255\255\255\0\0\0\0\0\204\204\204\0\255\153\102\0\255\255\0\0\204\255\0\0\153\255\0\0\51\255\0\0\0\255\102\0\0\255\153\0\0\255\204\0\0\255\255\0\0\204\255\0\0\153\255\0\0\102\255\0\0\0\255\0") then
 		if file_img then
 			io.close(file_img)
 		end
@@ -1485,8 +1505,8 @@ function export_treeview()
 	
 	--for now, save a blank canvas on disk
 	for y=image_height, 1, -1 do
-		for x=1, image_width do
-			if not io.write(string.char(0xFF) .. string.char(0xFF) .. string.char(0xFF)) then
+		for x=1, math.ceil(image_width/2) do
+			if not io.write("\0") then
 				if file_img then
 					io.close(file_img)
 				end
@@ -1541,23 +1561,9 @@ function export_treeview()
 			row_offset = row_offset +vertical_span*2 +font_height
 			
 			for x=1, #cells[i][z] do
-				local new_red   = 0
-				local new_green = 0
-				local new_blue  = 0
-				if cells[i][z][x]["wait"] < 17 then
-					new_red   =   0
-					new_green = 255
-					new_blue  = 255 -cells[i][z][x]["wait"]*15
-				elseif cells[i][z][x]["wait"] < 34 then
-					new_red   = cells[i][z][x]["wait"]*15 -255
-					new_green = 255
-					new_blue  =   0
-				else
-					new_red   = 255
-					new_green = math.max(0, 765 -cells[i][z][x]["wait"]*15)
-					new_blue  =   0
-				end
-				fill_color(new_red, new_green, new_blue, file_img,image_height,image_width,
+				local new_color_index = math.min(0x04 +math.floor(cells[i][z][x]["wait"]/gradation_step), 0x0F)
+				
+				fill_color(new_color_index, file_img,image_height,image_width,
 				column_offset, row_offset, columns1_width[i], vertical_span*2 +font_height*4 +line_span*3)
 				
 				cells[i][z][x]["x_center"] = math.floor(column_offset+columns1_width[i]/2)
@@ -1585,13 +1591,9 @@ function export_treeview()
 	for x=#cells, 2, -1 do
 		for z=1, #cells[x] do
 			for i=1, #cells[x][z] do
-				local new_red   = 0xC0
-				local new_green = 0xC0
-				local new_blue  = 0xC0
+				local new_color_index = 0x02
 				if cells[x][z][i]["fastest"] then
-					new_red   = 0x60
-					new_green = 0xA0
-					new_blue  = 0xFF
+					new_color_index = 0x03
 				end
 				
 				local x2 = 0
@@ -1612,10 +1614,10 @@ function export_treeview()
 						end
 					end
 				end
-				draw_line(new_red, new_green, new_blue, file_img, image_height, image_width,
+				draw_line(new_color_index, file_img, image_height, image_width,
 				cells[x][z][i]["x_center"], cells[x][z][i]["y_center"], x2, y2)
 				
-				draw_dot(new_red, new_green, new_blue, file_img, image_height, image_width, x2, y2)
+				draw_dot(new_color_index, file_img, image_height, image_width, x2, y2)
 			end
 		end
 	end
