@@ -1508,7 +1508,7 @@ function export_treeview()
 			file_img:write("\0")
 			bytes_to_write = bytes_to_write +1
 			if bytes_to_write >= 1048576 then
-				io.flush() --we flush the pending writing bytes, in order to avoid running out of memory when making a gigantic file
+				file_img:flush() --we flush the pending writing bytes, in order to avoid running out of memory when making a gigantic file
 				bytes_to_write = bytes_to_write %1048576 --let's neatly keep it to a multiple of hard disk sectors (4096 in most cases)
 			end
 		end
