@@ -442,9 +442,16 @@ while current_action <= #action do--this is the main code block that controls th
 			current_action = #action+1
 		else --if script execution gets here, the progress from latest action executed will be stored on disk, and the previous one deleted
 			if current_action == #action then--it's over! let's load the best state.
-				local minimum = state[current_action][1][1]["cycle"]
-				local minumum_index = 1
+				local minimum       = 1
 				local minimum_alt   = 1
+				local minumum_index = 1
+				for z=1, #state[current_action] do --let's initialize the 3 variables
+					if #state[current_action][z] > 0 then
+						minimum     = state[current_action][z][1]["cycle"]
+						minimum_alt = z
+						break
+					end
+				end
 				for z=1, #state[current_action] do
 					for i=1, #state[current_action][z] do
 						if state[current_action][z][i]["cycle"] ~= nil then
