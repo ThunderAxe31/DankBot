@@ -75,11 +75,10 @@ local rerecordcounting = movie.setrerecordcounting or movie.rerecordcounting
 local movie_is_loaded = movie.isloaded or movie.active
 get_emu_time = emu.framecount() --this must stay global!
 
+local file_log = io.open("log.txt", "a")
 local function log_update(text)
-	file_log = io.open("log.txt", "a")
-	io.output(file_log)
-	io.write(text .. "\n")
-	io.close(file_log)
+	file_log:write(text .. "\n")
+	file_log:flush()
 	text_output(text)
 end
 
@@ -145,6 +144,9 @@ local function close_session()
 	end
 	if client and client.frameskip then
 		client.frameskip(0)
+	end
+	if file_log then
+		io.close(file_log)
 	end
 	pause()
 end
@@ -333,10 +335,11 @@ if not movie_is_loaded() then --since there is no function to create a new movie
 else
 	local file_resume = io.open("resume.lua", "r")
 	if taseditor or (file_resume == nil) then --if using FCEUX or resume.lua doesn't exist, wipe log.txt and start a new session from scratch
-		local file_log = io.open("log.txt", "w")
-		io.output(file_log)
-		io.write("")
 		io.close(file_log)
+		file_log = io.open("log.txt", "w")
+		file_log:write("")
+		io.close(file_log)
+		file_log = io.open("log.txt", "a")
 		
 		if tastudio then --simple way of confirming if we're using BizHawk
 			savestate.save(state[0][1][1]["slot"], true)
@@ -358,8 +361,7 @@ else
 		end
 		log_update(" Initializing state 0-1-1" .. time_unit .. cycle .. rng_display)
 	else --if we're using BizHawk and resume.lua exists, resume the suspended session
-		io.input(file_resume)
-		local file_resume_data = io.read()
+		local file_resume_data = file_resume:read()
 		io.close(file_resume)
 		if file_resume_data then
 			if string.sub(file_resume_data, 1, 7) == "return " then
@@ -479,9 +481,8 @@ while current_action <= #action do--this is the main code block that controls th
 				end
 				
 				state["restart_action"] = current_action +1
-				file_resume = io.open("resume.lua", "w")
-				io.output(file_resume)
-				io.write("return " .. table.tostring(state)) --save state data for resuming
+				local file_resume = io.open("resume.lua", "w")
+				file_resume:write("return " .. table.tostring(state)) --save state data for resuming
 				io.close(file_resume)
 			elseif taseditor then
 				for z=1, #state[current_action-1] do
