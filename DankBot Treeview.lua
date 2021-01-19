@@ -1,4 +1,4 @@
---DankBot Treeview v1.1 by ThunderAxe31. Generates a graphical output as .bmp file for DankBot v3.0 or later.
+--DankBot Treeview v1.2 by ThunderAxe31. Generates a graphical output as .bmp file for DankBot v3.0 or later.
 
 local font_height = 11
 local font_width  =  8
@@ -1340,7 +1340,7 @@ function export_treeview()
 	local line_span	      = 2
 	local gradation_step  = custom_gradation_step or 1
 	
-	local title = "DankBot Treeview v1.1 by ThunderAxe31"
+	local title = "DankBot Treeview v1.2 by ThunderAxe31"
 	
 	local columns_title = {}
 	for i=1, #state do
