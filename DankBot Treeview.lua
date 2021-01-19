@@ -1571,23 +1571,17 @@ function export_treeview()
 		column_offset = column_offset +columns1_width[i] -- -horizontal_span/2 --add this to lessen the in-between-span
 	end
 	
-	local fastest = nil
-	local fastest_cycle = nil
 	for z=1, #cells[#cells] do
 		for i=1, #cells[#cells][z] do
-			if (fastest_cycle == nil) or (cells[#cells][z][i]["cycle"] < fastest_cycle)  then
-				fastest = {z, i}
-				fastest_cycle = cells[#cells][z][i]["cycle"]
-			end
+			cells[#cells][z][i]["alive"] = true
 		end
 	end
-	cells[#cells][fastest[1]][fastest[2]]["fastest"] = true
 	
 	for x=#cells, 2, -1 do
 		for z=1, #cells[x] do
 			for i=1, #cells[x][z] do
 				local new_color_index = 0x02
-				if cells[x][z][i]["fastest"] then
+				if cells[x][z][i]["alive"] then
 					new_color_index = 0x03
 				end
 				
@@ -1600,8 +1594,8 @@ function export_treeview()
 						   (cells[x-1][z2][i2]["origin"][2] == cells[x][z][i]["parent"][2]) then
 							x2 = cells[x-1][z2][i2]["x_center"]
 							y2 = cells[x-1][z2][i2]["y_center"]
-							if cells[x][z][i]["fastest"] then
-								cells[x-1][z2][i2]["fastest"] = true
+							if cells[x][z][i]["alive"] then
+								cells[x-1][z2][i2]["alive"] = true
 							end
 							--let's get out of there.
 							z2 = #cells[x-1]+1
