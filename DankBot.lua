@@ -492,7 +492,7 @@ while current_action <= #action do--this is the main code block that controls th
 				end
 			end
 			
-			if(current_action>=2) then
+			if (current_action>=2) and action[current_action]["treeview"] then
 				local check_treeview = io.open("DankBot Treeview.lua", "r")
 				if check_treeview then
 					io.close(check_treeview)
