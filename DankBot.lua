@@ -76,7 +76,7 @@ local movie_is_loaded = movie.isloaded or movie.active
 get_emu_time = emu.framecount() --this must stay global!
 
 local file_log = io.open("log.txt", "a")
-local function log_update(text)
+function log_update(text)
 	file_log:write(text .. "\n")
 	file_log:flush()
 	text_output(text)
