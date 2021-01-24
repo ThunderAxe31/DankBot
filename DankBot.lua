@@ -147,6 +147,7 @@ local function close_session()
 	end
 	if file_log then
 		io.close(file_log)
+		file_log = nil
 	end
 	pause()
 end
