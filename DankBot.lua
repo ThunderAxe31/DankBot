@@ -267,6 +267,10 @@ local function act(action_type, alts)
 						
 					local wait_step = action[current_action][alt]["custom_wait_step"] or global_wait_step
 					
+					for i=1, min_wait do--we wait for the min_wait amount of frames
+						emu.frameadvance()
+					end
+					
 					local temp_state = 0
 					if memorysavestate and memorysavestate.clearstatesfrommemory then
 						temp_state = memorysavestate.savecorestate()
@@ -276,16 +280,6 @@ local function act(action_type, alts)
 					end
 					
 					for wait=min_wait, max_wait, wait_step do
-						if memorysavestate and memorysavestate.clearstatesfrommemory then
-							memorysavestate.loadcorestate(temp_state)
-						elseif taseditor then
-							savestate.load(temp_state)
-						end
-						
-						for i=1, wait do--we wait for a given amount of frames
-							emu.frameadvance()
-						end
-						
 						if state[current_action][alt][max_states] ~= nil then
 							local maximum_index = 1
 							for i=2, max_states do
@@ -301,7 +295,28 @@ local function act(action_type, alts)
 						if action[current_action].func.execute(alts[alt]) then
 							state_add(alt, wait, {alt_num, state_num})
 						end
+						
+						if wait > (max_wait -wait_step) then
+							break
+						end
+						
+						if memorysavestate and memorysavestate.clearstatesfrommemory then
+							memorysavestate.loadcorestate(temp_state)
+						elseif taseditor then
+							savestate.load(temp_state)
+						end
+						
+						for i=1, wait_step do
+							emu.frameadvance()
+						end
+						
+						if memorysavestate and memorysavestate.clearstatesfrommemory then
+							temp_state = memorysavestate.savecorestate()
+						elseif taseditor then --otherwise, we'll just assume we're using FCEUX
+							savestate.save(temp_state)
+						end
 					end
+					
 					if memorysavestate and memorysavestate.clearstatesfrommemory then
 						memorysavestate.removestate(temp_state)
 					elseif taseditor then
